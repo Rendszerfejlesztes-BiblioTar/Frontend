@@ -1,0 +1,56 @@
+.book-card {
+  aspect-ratio: 3 / 4;
+  width: clamp(120px, 10vw, 180px);
+  height: clamp(120px, 10vw, 180px);;
+
+  border: 1px solid black;
+  box-sizing: border-box;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  overflow: hidden;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:global {
+    > .title {
+      width: 100%;
+      height: 50%;
+
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      margin: 0;
+      margin-top: 5px;
+
+      font-size: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    > .author-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      > .author {
+        font-size: 15px;
+        text-align: center;
+        margin: 0;
+      }
+
+      > .category {
+        font-size: 10px;
+        text-align: center;
+        font-weight: lighter;
+        margin: 0;
+      }
+    }
+  }
+}

@@ -1,2 +1,29 @@
-node_modules
-dist
+# Node modules
+/node_modules/
+
+# Build output
+/dist/
+/build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# WebStorm
+.idea/
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# NPM package-lock file
+/package-lock.json
+/yarn.lock

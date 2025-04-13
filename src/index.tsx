@@ -1,15 +1,28 @@
+import 'reflect-metadata';
 /* @refresh reload */
 import { render } from 'solid-js/web';
+import { JSX } from "solid-js";
+import { container } from "tsyringe";
 
-import './index.css';
-import App from './App';
+import { DIContextProvider } from "./services/di-context-provider.service";
+import { AppService } from "./services/app.service";
 
-const root = document.getElementById('root');
+import BiblioTar from "./components/bibliotar";
 
-if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
-  throw new Error(
-    'Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got misspelled?',
-  );
-}
+((): void => {
+  const root: HTMLElement | null = document.getElementById('root');
 
-render(() => <App />, root!);
+  if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
+    throw new Error(
+        'Root element not found. Did you forget to add it to your index.html? Or maybe the id attribute got misspelled?',
+    );
+  }
+
+  container.registerSingleton(AppService);
+
+  render((): JSX.Element => <>
+    <DIContextProvider.Provider value={container}>
+      <BiblioTar />
+    </DIContextProvider.Provider>
+  </>, root!);
+})();
