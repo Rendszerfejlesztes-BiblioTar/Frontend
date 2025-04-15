@@ -2,11 +2,11 @@ import {
     JSX
 } from "solid-js";
 
-import { Book } from "../../../interfaces/book.interfaces";
+import { BookGetDTO } from "../../../interfaces/book.interfaces";
 
 import style from './book-card.module.scss'
 
-export default (props: { book: Book, onClick: () => void }): JSX.Element => {
+export default (props: { book: BookGetDTO, onClick: () => void }): JSX.Element => {
 
     return <>
         <div
