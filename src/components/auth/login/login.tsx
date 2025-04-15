@@ -5,6 +5,6 @@ import {
 export default (): JSX.Element => {
 
     return <>
-    AUTH PAGE!
+        Login Page
     </>
 }
