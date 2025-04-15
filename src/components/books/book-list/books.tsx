@@ -10,7 +10,7 @@ import { useNavigate } from "@solidjs/router";
 import { DIContextProvider } from '../../../services/di-context-provider.service';
 import { AppService } from '../../../services/app.service';
 
-import { Book } from '../../../interfaces/book.interfaces';
+import { BookGetDTO } from '../../../interfaces/book.interfaces';
 
 import style from './books.module.scss';
 
@@ -21,11 +21,12 @@ export default (): JSX.Element => {
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
 
-    const [booksSIG, setBooksSIG] = createSignal<Book[]>([]);
+    const [booksSIG, setBooksSIG] = createSignal<BookGetDTO[]>([]);
 
     onMount((): void => {
-        app.bookService.getBooks().then((res: Book[] | undefined): void => {
+        app.bookService.getBooksByTitle("T").then((res: BookGetDTO[] | undefined): void => {
             if (res) {
+                console.log(res);
                 setBooksSIG(res);
             }
         });
@@ -39,7 +40,7 @@ export default (): JSX.Element => {
         <div class={`books ${style['books']}`}>
             <div class={'book-container'}>
                 <For each={booksSIG()}>
-                    {(item: Book): JSX.Element => {
+                    {(item: BookGetDTO): JSX.Element => {
                         return <BookCard
                             book={item}
                             onClick={(): void => { navigate(item.id) }}

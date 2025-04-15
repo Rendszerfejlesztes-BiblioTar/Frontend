@@ -1,36 +1,41 @@
-export interface Book {
+export interface BookGetDTO {
     id: number;
-    title: string;
-    authorId: string;
-    authorName: string;
-    categoryId: number;
-    categoryName: string;
-    description: string;
-    isAvailable: boolean;
-    numberInLibrary: string;
-    bookQuality: number;
-}
-
-export interface BookFromId {
-    id: number;
-    title: string;
+    title?: string;
     authorId: number;
-    author: Author;
+    authorName?: string;
     categoryId: number;
-    category: Category;
-    description: string;
-    isAvailable: boolean,
-    numberInLibrary: string;
+    categoryName?: string;
+    description?: string;
+    isAvailable: boolean;
+    numberInLibrary?: string;
     bookQuality: number;
-
 }
 
-export interface Author {
-    id: number;
-    name: string;
+export interface BookPatchDTO {
+    title?: string;
+    authorId?: number;
+    categoryId?: number;
+    isAvailable?: boolean;
+    numberInLibrary?: string;
+    bookQuality?: number;
 }
 
-export interface Category {
-    id: number;
-    name: string;
+export interface BookAvailabilityPatchDTO {
+    Id: number;
+    IsAvailable: boolean;
+}
+
+export interface BookQualityPatchDTO {
+    Id: number;
+    BookQuality: number;
+}
+
+export interface BookPostDTO {
+    title?: string;
+    authorId: number;
+    categoryId: number;
+    description?: string;
+    isAvailable?: boolean;
+    numberInLibrary?: string;
+    bookQuality: number;
 }
