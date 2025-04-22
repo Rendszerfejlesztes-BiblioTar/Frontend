@@ -23,7 +23,11 @@ export default (): JSX.Element => {
     <div
         style={{
           width:'100%',
-          height:'100%'
+          height:'100%',
+          background: '#e3d6c3',
+          display: 'flex',
+          "flex-direction": 'column',
+          "min-height": '100vh'
         }}
     >
       <NavbarUtil></NavbarUtil>

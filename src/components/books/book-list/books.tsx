@@ -12,8 +12,6 @@ import { AppService } from '../../../services/app.service';
 
 import { BookGetDTO } from '../../../interfaces/book.interfaces';
 
-import style from './books.module.scss';
-
 import BookCard from '../book-card/book-card';
 
 export default (): JSX.Element => {
@@ -24,7 +22,7 @@ export default (): JSX.Element => {
     const [booksSIG, setBooksSIG] = createSignal<BookGetDTO[]>([]);
 
     onMount((): void => {
-        app.bookService.getBooksByTitle("T").then((res: BookGetDTO[] | undefined): void => {
+        app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
             if (res) {
                 console.log(res);
                 setBooksSIG(res);
@@ -37,17 +35,17 @@ export default (): JSX.Element => {
     }
 
     return <>
-        <div class={`books ${style['books']}`}>
-            <div class={'book-container'}>
-                <For each={booksSIG()}>
-                    {(item: BookGetDTO): JSX.Element => {
-                        return <BookCard
-                            book={item}
-                            onClick={(): void => { navigate(item.id) }}
+        <div class="row" style={{ "margin-top": '1rem', "margin-left": '0.25rem', "margin-right": '0.25rem'}}>
+            <For each={booksSIG()}>
+                {(book: BookGetDTO): JSX.Element => {
+                    return <div class="col-2 d-flex justify-content-center mb-4">
+                        <BookCard
+                            book={book}
+                            onClick={(): void => { navigate(book.id) }}
                         />
-                    }}
-                </For>
-            </div>
+                    </div>
+                }}
+            </For>
         </div>
     </>
 }

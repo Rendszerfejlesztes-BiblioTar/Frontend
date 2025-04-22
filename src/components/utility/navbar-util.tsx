@@ -3,7 +3,7 @@ import { Container, Nav, Navbar } from "solid-bootstrap";
 
 export default (): JSX.Element => {
 
-    return <Navbar bg="dark" variant="dark" expand="lg">
+    return <Navbar  variant="dark" expand="lg" style={{ background: '#402208'}}>
         <Container>
             <Navbar.Brand>Bibliotár</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
