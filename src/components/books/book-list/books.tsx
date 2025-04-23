@@ -24,7 +24,6 @@ export default (): JSX.Element => {
     onMount((): void => {
         app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
             if (res) {
-                console.log(res);
                 setBooksSIG(res);
             }
         });
