@@ -6,7 +6,7 @@ import { Route, Router, useNavigate } from '@solidjs/router';
 
 import PageNotFound from "./page-not-found/page-not-found";
 import NavbarUtil from './utility/navbar-util';
-import SearchUtil from './utility/search-util';
+
 
 export default (): JSX.Element => {
 
@@ -32,7 +32,6 @@ export default (): JSX.Element => {
         }}
     >
       <NavbarUtil></NavbarUtil>
-      <SearchUtil></SearchUtil>
       <Router>
         {/* Redirects */}
         <Route path={'/'} component={(): JSX.Element => {

@@ -14,6 +14,8 @@ import { BookGetDTO } from '../../../interfaces/book.interfaces';
 
 import BookCard from '../book-card/book-card';
 
+import SearchUtil from '../../utility/search-util';
+
 export default (): JSX.Element => {
     const navigator = useNavigate();
 
@@ -34,6 +36,7 @@ export default (): JSX.Element => {
     }
 
     return <>
+        <SearchUtil setBooksSIG={setBooksSIG}></SearchUtil>
         <div class="row" style={{ "margin-top": '1rem', "margin-left": '0.25rem', "margin-right": '0.25rem'}}>
             <For each={booksSIG()}>
                 {(book: BookGetDTO): JSX.Element => {

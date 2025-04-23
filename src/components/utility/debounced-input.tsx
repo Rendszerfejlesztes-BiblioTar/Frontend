@@ -1,5 +1,8 @@
 import { Form } from "solid-bootstrap";
-import { createEffect, createSignal, onCleanup } from "solid-js";
+import { createEffect, createSignal, onCleanup, useContext } from "solid-js";
+import { BookGetDTO } from "../../interfaces/book.interfaces";
+import { AppService } from "../../services/app.service";
+import { DIContextProvider } from "../../services/di-context-provider.service";
 
 function useDebounce(signalSetter: any, delay: any) {
     let timerHandle: any
@@ -11,23 +14,47 @@ function useDebounce(signalSetter: any, delay: any) {
     return debouncedSignalSetter;
 }
 
-function DebouncedInput(props : {placeholder : string, type: number}) {
+function DebouncedInput(props : {placeholder : string, type: number, setBooksSIG: (books: BookGetDTO[]) => void }) {
     const [inputValue, setInputValue] = createSignal("");
     const debouncedSetInputValue = useDebounce(setInputValue, 1000);
 
-    //TODO!!! make api call to backend
+    const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
+
     createEffect(() => {
         const value = inputValue();
+
+        if (value === "") {
+            app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
+                if (res) {
+                    props.setBooksSIG(res);
+                }
+            });
+            return;
+        }
+
         if (value) {
             if (props.type == 0) {
                 //Title search
-                // console.log("Title: " + value);
+                app.bookService.getBooksByTitle(value).then((res: BookGetDTO[] | undefined): void => {
+                    if (res) {
+                        props.setBooksSIG(res);
+                    }
+                    else {
+                        props.setBooksSIG([]);
+                    }
+                });
             }
             if (props.type == 1) {
                 //author search
-                // console.log("Author: " + value);
+                app.bookService.getBooksByAuthor(value).then((res: BookGetDTO[] | undefined): void => {
+                    if (res) {
+                        props.setBooksSIG(res);
+                    }
+                    else {
+                        props.setBooksSIG([]);
+                    }
+                });
             }
-            
         }
     });
 
