@@ -7,7 +7,18 @@ import { BookGetDTO } from "../../../interfaces/book.interfaces";
 import { Button, Card, ListGroup, ListGroupItem } from "solid-bootstrap";
 
 export default (props: { book: BookGetDTO, onClick: () => void }): JSX.Element => {
-    return <Card style={{ width: '15rem', height: '100%' }} onClick={props.onClick} class="d-flex flex-column shadow rounded">
+
+    let description = "";
+    if (props.book.description != null) {
+        if (props.book.description.length > 50) {
+            description = props.book.description.substring(0, 50) + "...";
+        }
+        else {
+            description = props.book.description;
+        }
+    }
+
+    return <Card style={{ width: '15rem', height: '100%'}} onClick={props.onClick} class="d-flex flex-column shadow rounded">
         <Card.Body class="d-flex flex-column">
             <Card.Title style={{ "font-size": "1.5rem", "font-weight": 'bold' }}>{props.book.title}</Card.Title>
             
@@ -16,7 +27,7 @@ export default (props: { book: BookGetDTO, onClick: () => void }): JSX.Element =
             
             <hr class="my-2" />
             <Card.Text class="flex-grow-1" style={{ "font-size": "1.2rem" }}>
-                {props.book.description}
+                {description}
             </Card.Text>
             <div class="mt-auto">
                 <Button variant="info" style={{ background: '#402208', color: 'white', "border-color": '#402208'}}>Reserve</Button>
