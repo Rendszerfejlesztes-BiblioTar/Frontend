@@ -1,12 +1,12 @@
 export interface CategoryGetDTO {
-    id: number;
-    name: string;
+    Id: number;
+    Name: string;
 }
 
 export interface CategoryPostDTO {
-    name: string;
+    Name: string;
 }
 
 export interface CategoryPutDTO {
-    name: string;
+    Name: string;
 }

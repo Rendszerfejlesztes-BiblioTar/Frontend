@@ -1,12 +1,12 @@
 export interface AuthorGetDTO {
-    id: number;
-    name: string;
+    Id: number;
+    Name: string;
 }
 
 export interface AuthorPostDTO {
-    name: string;
+    Name: string;
 }
 
 export interface AuthorPatchDTO {
-    name: string;
+    Name: string;
 }
