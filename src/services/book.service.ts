@@ -21,7 +21,7 @@ export class BookService {
     /**
     * Requests all the books from tha API.
     * Returns a Promise that contains the result from the API fetch.
-    * @returns {Promise<Book[] | undefined>}
+    * @returns {Promise<BookGetDTO[] | undefined>}
     * */
     public getBooks(): Promise<BookGetDTO[] | undefined> {
         return new Promise<BookGetDTO[] | undefined>((resolve): void => {
@@ -39,7 +39,7 @@ export class BookService {
      * Requests the book information from the API.
      * Returns a Promise that contains the result from the API fetch.
      * @param {string} id
-     * @returns {Promise<BookFromId | undefined>}
+     * @returns {Promise<BookGetDTO | undefined>}
      * */
     public getBook(id: string): Promise<BookGetDTO | undefined> {
         return new Promise<BookGetDTO | undefined>((resolve): void => {
