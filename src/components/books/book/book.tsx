@@ -38,27 +38,27 @@ export default (): JSX.Element => {
             <div class="d-flex justify-content-center" style={{ "max-height": '100%', "overflow-y": 'auto', padding: '2rem' }}>
               <Card class="shadow rounded" style={{ width: '80vw', "max-width": '60vw' }}>
                 <Card.Body class="d-flex flex-column">
-                  <Card.Title style={{ "font-size": "2.5rem", "font-weight": 'bold' }}>{book().title}</Card.Title>
-                  <Card.Subtitle class="mb-2" style={{ "font-size": "2rem" }}>{book().authorName}</Card.Subtitle>
-                  <Card.Subtitle class="mb-2 text-muted" style={{ "font-size": "1.5rem" }}>{book().categoryName}</Card.Subtitle>
+                  <Card.Title style={{ "font-size": "2.5rem", "font-weight": 'bold' }}>{book().Title}</Card.Title>
+                  <Card.Subtitle class="mb-2" style={{ "font-size": "2rem" }}>{book().AuthorName}</Card.Subtitle>
+                  <Card.Subtitle class="mb-2 text-muted" style={{ "font-size": "1.5rem" }}>{book().CategoryName}</Card.Subtitle>
       
                   <hr class="my-2" />
                   <Card.Text class="flex-grow-1" style={{ "font-size": "1.5rem" }}>
-                    {book().description}
+                    {book().Description}
                   </Card.Text>
       
                   <hr class="my-2" />
       
                   <Card.Text class="flex-grow-1" style={{ "font-size": "1.5rem" }}>
-                    This book is <b>{book().isAvailable ? 'available' : 'currently unavailable'}</b>
+                    This book is <b>{book().IsAvailable ? 'available' : 'currently unavailable'}</b>
                   </Card.Text>
       
                   <Card.Text class="flex-grow-1" style={{ "font-size": "1.5rem" }}>
-                    This book is <b>{Object.values(Condition)[book().bookQuality]}</b> quality
+                    This book is <b>{Object.values(Condition)[book().BookQuality]}</b> quality
                   </Card.Text>
 
                   <Card.Text class="flex-grow-1" style={{ "font-size": "1.5rem" }}>
-                    Number in library: <b>{book().numberInLibrary}</b>
+                    Number in library: <b>{book().NumberInLibrary}</b>
                   </Card.Text>
       
                   <div class="mt-auto">

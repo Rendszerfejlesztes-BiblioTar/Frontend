@@ -1,10 +1,10 @@
 import { singleton } from "tsyringe";
 
+import { AuthenticationService } from "./authenticationService";
 import { AuthorService } from "./author.service";
 import { BookService } from "./book.service";
 import { HttpService } from "./http.service";
 import { CategoryService } from "./category.service";
-import {AuthenticationService} from "./authenticationService";
 
 @singleton()
 export class AppService {

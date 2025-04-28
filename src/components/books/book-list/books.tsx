@@ -37,13 +37,15 @@ export default (): JSX.Element => {
 
     return <>
         <SearchUtil setBooksSIG={setBooksSIG}></SearchUtil>
-        <div class="row" style={{ "margin-top": '1rem', "margin-left": '0.25rem', "margin-right": '0.25rem'}}>
+        <div class="row" style={{
+            "margin-top": '1rem', "margin-left": '0.25rem', "margin-right": '0.25rem',
+        }}>
             <For each={booksSIG()}>
                 {(book: BookGetDTO): JSX.Element => {
                     return <div class="col-2 d-flex justify-content-center mb-4">
                         <BookCard
                             book={book}
-                            onClick={(): void => { navigate(book.id) }}
+                            onClick={(): void => { navigate(book.Id) }}
                         />
                     </div>
                 }}

@@ -61,7 +61,7 @@ export class BookService {
      * */
     public getBooksByTitle(title: string): Promise<BookGetDTO[] | undefined> {
         return new Promise<BookGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get(`book/search/title=${title}`).then((res: Response): void => {
+            this.httpService.Get(`book/search/title?title=${title}`).then((res: Response): void => {
                 if (res.ok) {
                     resolve(res.json() as unknown as BookGetDTO[]);
                 } else {
@@ -79,7 +79,7 @@ export class BookService {
      * */
     public getBooksByAuthor(author: string): Promise<BookGetDTO[] | undefined> {
         return new Promise<BookGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get(`book/search/author=${author}`).then((res: Response): void => {
+            this.httpService.Get(`book/search/author?author=${author}`).then((res: Response): void => {
                 if (res.ok) {
                     resolve(res.json() as unknown as BookGetDTO[]);
                 } else {
@@ -97,7 +97,7 @@ export class BookService {
      * */
     public getBooksByCategory(category: string): Promise<BookGetDTO[] | undefined> {
         return new Promise<BookGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get(`book/search/category=${category}`).then((res: Response): void => {
+            this.httpService.Get(`book/search/category?category=${category}`).then((res: Response): void => {
                 if (res.ok) {
                     resolve(res.json() as unknown as BookGetDTO[]);
                 } else {

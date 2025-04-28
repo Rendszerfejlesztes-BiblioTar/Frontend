@@ -1,12 +1,21 @@
 import {
+  Accessor,
+  createEffect,
+  from,
   JSX,
-  lazy
+  lazy,
+  onMount,
+  useContext
 } from 'solid-js';
 import { Route, Router, useNavigate } from '@solidjs/router';
 
 import PageNotFound from "./page-not-found/page-not-found";
 import NavbarUtil from './utility/navbar-util';
 
+import { DIContextProvider } from "../services/di-context-provider.service";
+import { AppService } from "../services/app.service";
+
+import { RegisteredUser } from "../interfaces/authentication.interfaces";
 
 export default (): JSX.Element => {
 
@@ -18,6 +27,20 @@ export default (): JSX.Element => {
   const Login = lazy(() => import('./auth/login/login'));
   const Register = lazy(() => import('./auth/register/register'));
   const UserProfile = lazy(() => import('./user-profile/user-profile'));
+
+  const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
+
+  const token: Accessor<string | undefined> = from(app.authentication.token$);
+  const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
+
+  onMount((): void => {
+    app.authentication.checkIfAuthenticated();
+  });
+
+  createEffect((): void => {
+    console.log('token: ', token());
+    console.log('user: ', user());
+  });
 
   return <>
     
@@ -51,7 +74,6 @@ export default (): JSX.Element => {
         <Route path={'/admin'} component={Admin} />
         <Route path={'/librarian'} component={Librarian} />
         <Route path={'/profile'} component={UserProfile} />
-        
 
         {/* Page not found */}
         <Route path='*404' component={PageNotFound} />

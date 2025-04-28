@@ -1,14 +1,20 @@
-import {injectable} from "tsyringe";
+import { injectable } from "tsyringe";
 
-import {HttpService} from "./http.service";
+import { HttpService } from "./http.service";
 
 import {
-    Authentication, ChangeCredentials,
+    Authentication,
+    ChangeCredentials,
     BooleanAnswer,
     LoginAnswer,
-    RegisterAnswer, RegisteredUser, Contact, ChangePrivilege, AllUsers, AdminAnswer
+    RegisterAnswer,
+    RegisteredUser,
+    Contact,
+    ChangePrivilege,
+    AllUsers,
+    AdminAnswer
 } from "../interfaces/authentication.interfaces";
-import {BehaviorSubject, Observable} from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @injectable()
 export class AuthenticationService {
@@ -16,11 +22,30 @@ export class AuthenticationService {
     private token: BehaviorSubject<string | undefined> = new BehaviorSubject<string | undefined>(undefined);
     public token$: Observable<string | undefined> = this.token.asObservable();
 
-    private user: BehaviorSubject<RegisteredUser | undefined> = new BehaviorSubject<RegisteredUser | undefined>(undefined);
+    private user: BehaviorSubject<RegisteredUser | undefined> = new BehaviorSubject<RegisteredUser | undefined>({ Email: '', Privilege: 3, PrivilegeString: 'Unregistered'});
     public user$: Observable<RegisteredUser | undefined> = this.user.asObservable();
 
     constructor(httpService: HttpService) {
         this.httpService = httpService;
+    }
+
+    public async checkIfAuthenticated(): Promise<void> {
+        const foundToken: string | null = localStorage.getItem("accessToken");
+
+        if (!foundToken) {
+            return;
+        }
+
+        this.token.next(foundToken);
+
+        this.getLoggedInUsersData().then((res: RegisteredUser | undefined ) : void => {
+            if (res) {
+                this.user.next(res);
+                return;
+            }
+
+            this.resetState();
+        });
     }
 
     public async register(register: Authentication): Promise<RegisterAnswer | undefined> {
@@ -57,6 +82,7 @@ export class AuthenticationService {
             localStorage.setItem('expiresAt', expiresAt.toDateString());
 
             this.token.next(accessToken);
+            this.user.next(data.Data?.User);
 
             return data;
         } catch (error) {
@@ -117,7 +143,7 @@ export class AuthenticationService {
         try {
             const res: Response = await this.httpService.Post('users/logout');
 
-            this.resetToken();
+            this.resetState();
 
             if (!res) {
                 return undefined;
@@ -131,12 +157,14 @@ export class AuthenticationService {
         return undefined;
     }
 
-    private resetToken(): void {
+    private resetState(): void {
+        console.log('RESETING STATE');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('expiresAt');
 
         this.token.next(undefined);
+        this.user.next({ Email: '', Privilege: 3, PrivilegeString: 'Unregistered'});
     }
 
     public async getLoggedInUsersData(): Promise<RegisteredUser | undefined> {
@@ -147,12 +175,17 @@ export class AuthenticationService {
                 return undefined;
             }
 
-            return await res.json();
+            const data: LoginAnswer = await res.json();
+
+            if (data.Success) {
+                return data.Data! as unknown as RegisteredUser;
+            } else {
+                return undefined;
+            }
         } catch (error) {
             console.log("Get userdata error: ", error);
+            return undefined;
         }
-
-        return undefined;
     }
 
     public async changeContact(contact: Contact): Promise<BooleanAnswer | undefined> {
@@ -193,7 +226,7 @@ export class AuthenticationService {
                 return undefined;
             }
 
-            this.resetToken();
+            this.resetState();
             return await res.json();
         } catch (error) {
             console.log('User delete error: ', error);
