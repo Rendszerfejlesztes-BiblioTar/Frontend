@@ -43,7 +43,7 @@ export default (props: { setBooksSIG: (books: BookGetDTO[]) => void }): JSX.Elem
                     </Col>
                     <Col class="me-3">
                         <Form.Group controlId="formCategorySelect">
-                            <DropdownUtil type={1} search={true}></DropdownUtil>
+                            <DropdownUtil type={1} search={true} setBooksSIG={props.setBooksSIG}></DropdownUtil>
                         </Form.Group>
                     </Col>
                     <Col class="me-3">

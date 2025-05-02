@@ -6,11 +6,12 @@ import { DIContextProvider } from "../../services/di-context-provider.service";
 import { AuthorGetDTO } from "../../interfaces/author.interfaces";
 import { CategoryGetDTO } from "../../interfaces/category.interfaces";
 
-export default (props: { type: number, search: boolean }): JSX.Element => {
+export default (props: { type: number, search: boolean, setBooksSIG?: (books: BookGetDTO[]) => void }): JSX.Element => {
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
     const [authorSig, setAuthorSig] = createSignal<AuthorGetDTO[]>([]);
     const [categorySig, setCategorySig] = createSignal<CategoryGetDTO[]>([]);
+    const [selectedCategory, setSelectedCategory] = createSignal<string>("");
 
     if (props.type == 0) {
         //Author search
@@ -26,20 +27,44 @@ export default (props: { type: number, search: boolean }): JSX.Element => {
 
     if (props.type == 1) {
         //Category
-        // app.categoryService.getCategories().then((res: CategoryGetDTO[] | undefined): void => {
-        //     if (res) {
-        //         setCategorySig(res);
-        //     }
-        //     else {
-        //         setCategorySig([]);
-        //     }
-        // });
+        app.categoryService.getCategories().then((res: CategoryGetDTO[] | undefined): void => {
+            if (res) {
+                setCategorySig(res);
+            }
+            else {
+                setCategorySig([]);
+            }
+        });
     }
 
+    const handleChange = (e: Event) => {
+        const select = e.target as HTMLSelectElement;
+        const selectedName = select.options[select.selectedIndex].text;
+    
+        setSelectedCategory(selectedName);
+
+        if (props.search && selectedName !== "Search Category" && props.setBooksSIG) {
+            app.bookService.getBooksByCategory(selectedName).then((res: BookGetDTO[] | undefined): void => {
+                if (res) {
+                    props.setBooksSIG!(res);
+                } else {
+                    props.setBooksSIG!([]);
+                }
+            });
+        }
+        else {
+            app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
+                if (res) {
+                    props.setBooksSIG!(res);
+                }
+            });
+        }
+    }
+    
     return <>
-        <Form.Select>
+        <Form.Select onChange={handleChange}>
             <Show when={props.search === true}>
-                <option selected disabled>Search Category</option>
+                <option value="0" selected>Search Category</option>
             </Show>
             <Show when={props.type === 0}>
                 <For each={authorSig()}>
