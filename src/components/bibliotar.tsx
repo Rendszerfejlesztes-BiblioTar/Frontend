@@ -74,6 +74,7 @@ export default (): JSX.Element => {
         <Route path={'/admin'} component={Admin} />
         <Route path={'/librarian'} component={Librarian} />
         <Route path={'/profile'} component={UserProfile} />
+        <Route path={'/books/create'} component={Book} />
 
         {/* Page not found */}
         <Route path='*404' component={PageNotFound} />

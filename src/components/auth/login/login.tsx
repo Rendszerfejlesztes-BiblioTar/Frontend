@@ -62,7 +62,8 @@ export default (): JSX.Element => {
                             required
                         />
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <a href="/register" class="d-block mb-3">Don't have an account?</a>
+                    <button type="submit" class="btn btn-primary w-100" style={{ background: '#402208', color: 'white', "border-color": '#402208'}}>Login</button>
                 </form>
             </div>
         </div>

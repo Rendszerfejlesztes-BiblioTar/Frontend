@@ -4,21 +4,10 @@ import { AppService } from "../../services/app.service";
 import { DIContextProvider } from "../../services/di-context-provider.service";
 import DebouncedInput from "./debounced-input";
 import { BookGetDTO } from "../../interfaces/book.interfaces";
+import DropdownUtil from "./dropdown-util";
+
 
 export default (props: { setBooksSIG: (books: BookGetDTO[]) => void }): JSX.Element => {
-
-    // const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
-
-    // const [categoriesSIG, setCategoriesSIG] = createSignal<CategoryGetDto[]>([]);
-
-    //     onMount((): void => {
-    //         app.bookService.getBooks().then((res: CategoryGetDto[] | undefined): void => {
-    //             if (res) {
-    //                 console.log(res);
-    //                 setCategoriesSIG(res);
-    //             }
-    //         });
-    //     });
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
 
@@ -54,13 +43,7 @@ export default (props: { setBooksSIG: (books: BookGetDTO[]) => void }): JSX.Elem
                     </Col>
                     <Col class="me-3">
                         <Form.Group controlId="formCategorySelect">
-                            <Form.Select>
-                                <option selected disabled>Search Category</option>
-                                {/* TODO!!! add categories from service */}
-                                <option value="1">Fantasy</option>
-                                <option value="2">Adventure</option>
-                                <option value="3">Mystery</option>
-                            </Form.Select>
+                            <DropdownUtil type={1} search={true}></DropdownUtil>
                         </Form.Group>
                     </Col>
                     <Col class="me-3">

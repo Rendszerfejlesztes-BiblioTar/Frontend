@@ -1,8 +1,11 @@
 import {
+    Accessor,
     createSignal,
     For,
+    from,
     JSX,
     onMount,
+    Show,
     useContext
 } from 'solid-js';
 import { useNavigate } from "@solidjs/router";
@@ -15,13 +18,17 @@ import { BookGetDTO } from '../../../interfaces/book.interfaces';
 import BookCard from '../book-card/book-card';
 
 import SearchUtil from '../../utility/search-util';
+import NewButtonUtil from '../../utility/newButton-util';
+import { RegisteredUser } from '../../../interfaces/authentication.interfaces';
 
 export default (): JSX.Element => {
     const navigator = useNavigate();
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
+    const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
 
     const [booksSIG, setBooksSIG] = createSignal<BookGetDTO[]>([]);
+
 
     onMount((): void => {
         app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
@@ -51,5 +58,8 @@ export default (): JSX.Element => {
                 }}
             </For>
         </div>
+        <Show when={user() && user()!.Privilege === 0}>
+            <NewButtonUtil></NewButtonUtil>
+        </Show>
     </>
 }
