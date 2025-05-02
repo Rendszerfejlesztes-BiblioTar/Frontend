@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 
 import { HttpService } from "./http.service";
-import { CategoryGetDTO } from "../interfaces/category.interfaces";
+import {CategoryGetDTO, CategoryNameDTO} from "../interfaces/category.interfaces";
 
 @injectable()
 export class CategoryService {
@@ -16,83 +16,92 @@ export class CategoryService {
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<CategoryGetDTO[] | undefined>}
      * */
-    public getAuthors(): Promise<CategoryGetDTO[] | undefined> {
-        return new Promise<CategoryGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get('Category').then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as CategoryGetDTO[]);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
+    public async getCategories(): Promise<CategoryGetDTO[] | undefined> {
+        try {
+            const res: Response = await this.httpService.Get('Category');
+
+            if (res.ok) {
+                return await res.json() as unknown as CategoryGetDTO[];
+            }
+        } catch (error) {
+            console.log('Author get error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
-     * Requests the author with the given id from the API.
+     * Requests the category with the given id from the API.
+     * Returns a Promise that contains the result from the API fetch.
+     * @param id {number}
+     * @returns {Promise<CategoryGetDTO | undefined>}
+     * */
+    public async getCategoryById(id: number): Promise<CategoryGetDTO | undefined> {
+        try {
+            const res: Response = await this.httpService.Get(`Category/${id}`);
+
+            if (res.ok) {
+                return await res.json() as unknown as CategoryGetDTO;
+            }
+        } catch (error) {
+            console.log('')
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Posts the category with the given name to the API.
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<CategoryGetDTO | undefined>}
      * */
-    public getAuthorById(id: number): Promise<CategoryGetDTO | undefined> {
-        return new Promise<CategoryGetDTO | undefined>((resolve): void => {
-            this.httpService.Get(`Category/${id}`).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as CategoryGetDTO);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
+    public async postCategory(category: CategoryNameDTO): Promise<CategoryGetDTO | undefined> {
+        try {
+            const res: Response = await this.httpService.Post('Category', category);
+
+            if (res.ok) {
+                return await res.json() as unknown as CategoryGetDTO;
+            }
+        } catch (error) {
+            console.log('Category post error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
-     * Posts the Category with the given name to the API.
+     * Requests the category with the given id from tha API.
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<CategoryGetDTO | undefined>}
      * */
-    public postAuthor(author: CategoryGetDTO): Promise<CategoryGetDTO | undefined> {
-        return new Promise<CategoryGetDTO | undefined>((resolve): void => {
-            this.httpService.Post(`Author`, author).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as CategoryGetDTO);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
+    public async putCategory(id: number, category: CategoryNameDTO): Promise<CategoryGetDTO | undefined> {
+        try {
+            const res: Response = await this.httpService.Put(`Category/${id}`, category);
+
+            if (res.ok) {
+                return await res.json() as unknown as CategoryGetDTO;
+            }
+        } catch (error) {
+            console.log('Category Put error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
-     * Requests the author with the given id from tha API.
-     * Returns a Promise that contains the result from the API fetch.
-     * @returns {Promise<AuthorGetDTO | undefined>}
-     * */
-    public putAuthor(author: CategoryGetDTO): Promise<CategoryGetDTO | undefined> {
-        return new Promise<CategoryGetDTO | undefined>((resolve): void => {
-            this.httpService.Put(`Author`, author).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as CategoryGetDTO);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
-    }
-
-    /**
-     * Deletes the author with the given id.
+     * Deletes the category with the given id.
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<boolean | undefined>}
      * */
-    public deleteAuthor(id: number): Promise<boolean | undefined> {
-        return new Promise<boolean | undefined>((resolve): void => {
-            this.httpService.Put(`Author/${id}`).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            });
-        });
+    public async deleteCategory(id: number): Promise<boolean | undefined> {
+        try {
+            const res: Response = await this.httpService.Delete(`Category/${id}`);
+
+            return res.ok;
+        } catch (error) {
+            console.log('Category delete error: ', error);
+        }
+
+        return undefined;
     }
 }

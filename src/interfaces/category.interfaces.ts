@@ -3,10 +3,6 @@ export interface CategoryGetDTO {
     Name: string;
 }
 
-export interface CategoryPostDTO {
-    Name: string;
-}
-
-export interface CategoryPutDTO {
+export interface CategoryNameDTO {
     Name: string;
 }
