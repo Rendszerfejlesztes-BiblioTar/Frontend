@@ -1,23 +1,24 @@
 export interface BookGetDTO {
-    id: number;
-    title?: string;
-    authorId: number;
-    authorName?: string;
-    categoryId: number;
-    categoryName?: string;
-    description?: string;
-    isAvailable: boolean;
-    numberInLibrary?: string;
-    bookQuality: number;
+    Id: number;
+    Title?: string;
+    AuthorId: number;
+    AuthorName?: string;
+    CategoryId: number;
+    CategoryName?: string;
+    Description?: string;
+    IsAvailable: boolean;
+    NumberInLibrary?: string;
+    BookQuality: number;
 }
 
 export interface BookPatchDTO {
-    title?: string;
-    authorId?: number;
-    categoryId?: number;
-    isAvailable?: boolean;
-    numberInLibrary?: string;
-    bookQuality?: number;
+    Title?: string;
+    AuthorId?: number;
+    CategoryId?: number;
+    Description?: string;
+    IsAvailable?: boolean;
+    NumberInLibrary?: string;
+    BookQuality?: number;
 }
 
 export interface BookAvailabilityPatchDTO {
@@ -31,11 +32,11 @@ export interface BookQualityPatchDTO {
 }
 
 export interface BookPostDTO {
-    title?: string;
-    authorId: number;
-    categoryId: number;
-    description?: string;
-    isAvailable?: boolean;
-    numberInLibrary?: string;
-    bookQuality: number;
+    Title?: string;
+    AuthorId: number;
+    CategoryId: number;
+    Description?: string;
+    IsAvailable?: boolean;
+    NumberInLibrary?: string;
+    BookQuality: number;
 }

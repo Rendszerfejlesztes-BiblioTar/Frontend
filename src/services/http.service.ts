@@ -13,6 +13,12 @@ export class HttpService {
     private getHeaders(): Headers {
         const headers = new Headers();
 
+        const token: string | null = localStorage.getItem('accessToken');
+
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
+
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 

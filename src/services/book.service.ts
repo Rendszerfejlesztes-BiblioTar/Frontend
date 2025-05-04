@@ -21,159 +21,195 @@ export class BookService {
     /**
     * Requests all the books from tha API.
     * Returns a Promise that contains the result from the API fetch.
-    * @returns {Promise<Book[] | undefined>}
+    * @returns {Promise<BookGetDTO[] | undefined>}
     * */
-    public getBooks(): Promise<BookGetDTO[] | undefined> {
-        return new Promise<BookGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get('Book').then((res: Response): void => {
-               if (res.ok) {
-                   resolve(res.json() as unknown as BookGetDTO[]);
-               } else {
-                   resolve(undefined);
-               }
-            });
-        });
+    public async getBooks(): Promise<BookGetDTO[] | undefined> {
+        try {
+            const res: Response = await this.httpService.Get('Book');
+
+            if (res.ok) {
+                return await res.json() as unknown as BookGetDTO[];
+            }
+
+            return undefined;
+        } catch (error) {
+            console.log('Book get error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
      * Requests the book information from the API.
      * Returns a Promise that contains the result from the API fetch.
-     * @param {string} id
-     * @returns {Promise<BookFromId | undefined>}
+     * @param id {number}
+     * @returns {Promise<BookGetDTO | undefined>}
      * */
-    public getBook(id: string): Promise<BookGetDTO | undefined> {
-        return new Promise<BookGetDTO | undefined>((resolve): void => {
-           this.httpService.Get(`book/${id}`).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as BookGetDTO);
-                } else {
-                    resolve(undefined);
-                }
-           });
-        });
+    public async getBook(id: string): Promise<BookGetDTO | undefined> {
+        try {
+            const res: Response = await this.httpService.Get(`book/${id}`);
+
+            if (res.ok) {
+                return await res.json() as unknown as BookGetDTO;
+            }
+
+            return undefined;
+        } catch (error) {
+            console.log('Book get error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
      * Requests the books from the API with titles that are like given in the parameter.
      * Returns a Promise that contains the result from the API fetch.
-     * @param {string} title
+     * @param title {string}
      * @returns {Promise<BookGetDTO[] | undefined>}
      * */
-    public getBooksByTitle(title: string): Promise<BookGetDTO[] | undefined> {
-        return new Promise<BookGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get(`book/search/title=${title}`).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as BookGetDTO[]);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
+    public async getBooksByTitle(title: string): Promise<BookGetDTO[] | undefined> {
+        try {
+            const res: Response = await this.httpService.Get(`book/search/title?title=${title}`);
+
+            if (res.ok) {
+                return await res.json() as unknown as BookGetDTO[];
+            }
+
+            return undefined;
+        } catch (error) {
+            console.log('Book get error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
      * Requests the books from the API with author that are like given in the parameter.
      * Returns a Promise that contains the result from the API fetch.
-     * @param {string} author
+     * @param author {string}
      * @returns {Promise<BookGetDTO[] | undefined>}
      * */
-    public getBooksByAuthor(author: string): Promise<BookGetDTO[] | undefined> {
-        return new Promise<BookGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get(`book/search/author=${author}`).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as BookGetDTO[]);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
+    public async getBooksByAuthor(author: string): Promise<BookGetDTO[] | undefined> {
+        try {
+            const res: Response = await this.httpService.Get(`book/search/author?author=${author}`);
+
+            if (res.ok) {
+                return await res.json() as unknown as BookGetDTO[];
+            }
+
+            return undefined;
+        } catch (error) {
+            console.log('Book get error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
      * Requests the books from the API with category that are like given in the parameter.
      * Returns a Promise that contains the result from the API fetch.
-     * @param {string} category
+     * @param category {string}
      * @returns {Promise<BookGetDTO[] | undefined>}
      * */
-    public getBooksByCategory(category: string): Promise<BookGetDTO[] | undefined> {
-        return new Promise<BookGetDTO[] | undefined>((resolve): void => {
-            this.httpService.Get(`book/search/category=${category}`).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(res.json() as unknown as BookGetDTO[]);
-                } else {
-                    resolve(undefined);
-                }
-            });
-        });
+    public async getBooksByCategory(category: string): Promise<BookGetDTO[] | undefined> {
+        try {
+            const res: Response = await this.httpService.Get(`book/search/category?category=${category}`);
+
+            if (res.ok) {
+                return await res.json() as unknown as BookGetDTO[];
+            }
+
+            return undefined;
+        } catch (error) {
+            console.log('Book get error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
-     * POST the book given in the parameter.
-     * Returns a Promise that contains whether the POST operation was successful.
-     * @param {BookPostDTO} book
-     * @returns {Promise<boolean>}
+     * Takes the BookPostDTO and sends a Post request to the API.
+     * @param book {BookPostDTO}
+     * @returns {Promise<boolean | undefined>}
      * */
-    public postBooks(book: BookPostDTO): Promise<boolean> {
-        return new Promise<boolean>((resolve): void => {
-            this.httpService.Post(`book`, book).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            });
-        });
+    public async postBooks(book: BookPostDTO): Promise<boolean | undefined> {
+        try {
+            const res: Response = await this.httpService.Post(`book`, book);
+
+            return res.ok;
+        } catch (error) {
+            console.log('Post error: ', error)
+        }
+
+        return undefined;
     }
 
     /**
-     * Returns a Promise that contains whether the PATCH operation was successful.
-     * @param {number} id
-     * @param {BookPostDTO} book
-     * @returns {Promise<boolean>}
+     * Takes the ID and the BookPatchDTO and sends a Patch request to the API.
+     * @param id {number}
+     * @param book {BookPatchDTO}
+     * @returns {Promise<boolean | undefined>}
      * */
-    public patchBook(id: number, book: BookPatchDTO): Promise<boolean> {
-        return new Promise<boolean>((resolve): void => {
-            this.httpService.Post(`book/${id}`, book).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            });
-        });
+    public async patchBook(id: number, book: BookPatchDTO): Promise<boolean | undefined> {
+        try {
+            const res: Response = await this.httpService.Patch(`book/${id}`, book);
+
+            return res.ok;
+        } catch (error) {
+            console.log('Book patch error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
-     * Returns a Promise that contains whether the PATCH operation was successful.
-     * @param {BookPostDTO} book
-     * @returns {Promise<boolean>}
+     * Sends a Patch request to the API with the given BookAvailabilityPatchDTO.
+     * @param book {BookAvailabilityPatchDTO}
+     * @returns {Promise<boolean | undefined>}
      * */
-    public patchBookAvailability(book: BookAvailabilityPatchDTO): Promise<boolean> {
-        return new Promise<boolean>((resolve): void => {
-            this.httpService.Post(`book/availability`, book).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            });
-        });
+    public async patchBookAvailability(book: BookAvailabilityPatchDTO): Promise<boolean | undefined> {
+        try {
+            const res: Response = await this.httpService.Post(`book/availability`, book);
+
+            return res.ok;
+        } catch (error) {
+            console.log('Book patch error: ', error);
+        }
+
+        return undefined;
     }
 
     /**
-     * Returns a Promise that contains whether the PATCH operation was successful.
-     * @param {BookPostDTO} book
-     * @returns {Promise<boolean>}
+     * Sends a Patch request to the API with the given BookQualityPatchDTO.
+     * @param book {BookQualityPatchDTO}
+     * @returns {Promise<boolean | undefined>}
      * */
-    public patchBookQuality(book: BookQualityPatchDTO): Promise<boolean> {
-        return new Promise<boolean>((resolve): void => {
-            this.httpService.Post(`book/quality`, book).then((res: Response): void => {
-                if (res.ok) {
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            });
-        });
+    public async patchBookQuality(book: BookQualityPatchDTO): Promise<boolean | undefined> {
+        try {
+            const res: Response = await this.httpService.Post(`book/quality`, book);
+
+            return res.ok;
+        } catch (error) {
+            console.log('Book patch error: ', error);
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Takes the book's ID and sends a delete request to the API.
+     * @param bookId {number}
+     * @return {Promise<boolean | undefined>}
+     * */
+    public async deleteBook(bookId: number): Promise<boolean | undefined> {
+        try {
+            const res: Response = await this.httpService.Delete(`book/${bookId}`);
+
+            return res.ok;
+        } catch (error) {
+            console.log('Book delete error: ', error);
+        }
+
+        return undefined;
     }
 }
