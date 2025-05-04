@@ -53,6 +53,7 @@ export default (): JSX.Element => {
                         <BookCard
                             book={book}
                             onClick={(): void => { navigate(book.Id) }}
+                            onDelete={() => setBooksSIG(prev => prev.filter(b => b.Id !== book.Id))}
                         />
                     </div>
                 }}

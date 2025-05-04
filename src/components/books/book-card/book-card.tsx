@@ -16,11 +16,11 @@ import { AppService } from "../../../services/app.service";
 import { DIContextProvider } from "../../../services/di-context-provider.service";
 import { useNavigate } from "@solidjs/router";
 
-export default (props: { book: BookGetDTO, onClick: () => void }): JSX.Element => {
+export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => void }): JSX.Element => {
 
     const [descriptionSIG, setDescriptionSIG] = createSignal<string>('');
     const [hoveredSIG, setHoveredSIG] = createSignal<boolean>(false);
-    
+
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
     const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
     const navigate = useNavigate();
@@ -48,35 +48,36 @@ export default (props: { book: BookGetDTO, onClick: () => void }): JSX.Element =
         class="d-flex flex-column shadow rounded">
         <Card.Body class="d-flex flex-column">
             <Card.Title style={{ "font-size": "1.5rem", "font-weight": 'bold' }}>{props.book.Title}</Card.Title>
-            
+
             <Card.Subtitle class="mb-2" style={{ "font-size": "1.15rem" }}>{props.book.AuthorName}</Card.Subtitle>
             <Card.Subtitle class="mb-2 text-muted" style={{ "font-size": "1rem" }}>{props.book.CategoryName}</Card.Subtitle>
-            
+
             <hr class="my-2" />
             <Card.Text class="flex-grow-1" style={{ "font-size": "1.2rem" }}>
                 {descriptionSIG()}
             </Card.Text>
-            
+
             <Show when={user() && user()!.Privilege >= 2}>
                 <div class="mt-auto">
-                    <Button variant="info" style={{ background: '#402208', color: 'white', "border-color": '#402208'}}>Reserve</Button>
+                    <Button variant="info" style={{ background: '#402208', color: 'white', "border-color": '#402208' }}>Reserve</Button>
                 </div>
             </Show>
 
             <Show when={user() && user()!.Privilege < 2}>
                 <div class="d-flex gap-2 mt-auto">
-                    {/* TODO!!! delete fuction */}
-                    <Button variant="danger" >Delete</Button>
-                    {/* <Button 
-                        variant="danger" 
-                        onClick={(e) => {
+                    <Button
+                        variant="danger"
+                        onClick={async (e) => {
                             e.stopPropagation();
-                            navigate();
+                            try {
+                                await app.bookService.deleteBook(props.book.Id);
+                                props.onDelete();
+                            } catch (error) {}
                         }}
-                        >
+                    >
                         Delete
-                    </Button> */}
-                    {/* --------------------- */}
+                    </Button>
+
                     <Button variant="success">
                         Edit
                     </Button>

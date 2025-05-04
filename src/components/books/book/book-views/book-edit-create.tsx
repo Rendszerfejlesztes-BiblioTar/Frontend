@@ -31,7 +31,6 @@ export default (props: {
     const [quality, setQuality] = createSignal('');
 
     onMount(() => {
-        console.log(props.book);
         if (props.book) {
             setTitle(props.book.Title || '');
             setAuthor(props.book.AuthorId?.toString() || '');
@@ -72,8 +71,6 @@ export default (props: {
             // create
             props.handleSubmit(e, book);
         }
-        
-        
     };
 
     return <>
