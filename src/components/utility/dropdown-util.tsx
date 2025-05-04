@@ -1,41 +1,54 @@
 import { Form } from "solid-bootstrap"
-import { createSignal, For, JSX, Show, useContext } from "solid-js"
+import { createSignal, For, JSX, onMount, Show, useContext } from "solid-js"
 import { BookGetDTO } from "../../interfaces/book.interfaces";
 import { AppService } from "../../services/app.service";
 import { DIContextProvider } from "../../services/di-context-provider.service";
 import { AuthorGetDTO } from "../../interfaces/author.interfaces";
 import { CategoryGetDTO } from "../../interfaces/category.interfaces";
 
-export default (props: { type: number, search: boolean, setBooksSIG?: (books: BookGetDTO[]) => void, setAuthor?: (author: string) => void, setCategory?: (category: string) => void, setQuality?: (quality: string) => void }): JSX.Element => {
+export default (props: { value: string, type: number, search: boolean, setBooksSIG?: (books: BookGetDTO[]) => void, setAuthor?: (author: string) => void, setCategory?: (category: string) => void, setQuality?: (quality: string) => void }): JSX.Element => {
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
     const [authorSig, setAuthorSig] = createSignal<AuthorGetDTO[]>([]);
     const [categorySig, setCategorySig] = createSignal<CategoryGetDTO[]>([]);
-    const [selectedCategory, setSelectedCategory] = createSignal<string>("");
+    const [selectedValue, setSelectedValue] = createSignal<string>("");
 
-    if (props.type == 0) {
-        //Author search
-        app.authorService.getAuthors().then((res: AuthorGetDTO[] | undefined): void => {
-            if (res) {
-                setAuthorSig(res);
-            }
-            else {
-                setAuthorSig([]);
-            }
-        });
-    }
+    
 
-    if (props.type == 1) {
-        //Category
-        app.categoryService.getCategories().then((res: CategoryGetDTO[] | undefined): void => {
-            if (res) {
-                setCategorySig(res);
-            }
-            else {
-                setCategorySig([]);
-            }
-        });
-    }
+    onMount(() => {
+        if (props.type === 0) {
+            app.authorService.getAuthors().then((res) => {
+                if (res) {
+                    setAuthorSig(res);
+                    const selected = props.value || "1";
+                    setSelectedValue(selected);
+                    props.setAuthor?.(selected);
+                } else {
+                    setAuthorSig([]);
+                }
+            });
+        }
+    
+        if (props.type === 1) {
+            app.categoryService.getCategories().then((res) => {
+                if (res) {
+                    setCategorySig(res);
+                    const selected = props.value || "1";
+                    setSelectedValue(selected);
+                    props.setCategory?.(selected);
+                } else {
+                    setCategorySig([]);
+                }
+            });
+        }
+    
+        if (props.type === 2) {
+            const selected = props.value || "1";
+            setSelectedValue(selected);
+            props.setQuality?.(selected);
+        }
+    });
+    
 
     const handleChange = (e: Event) => {
         const select = e.target as HTMLSelectElement;
@@ -50,7 +63,16 @@ export default (props: { type: number, search: boolean, setBooksSIG?: (books: Bo
                 props.setCategory(selectedValue);
             }
             if (props.search && selectedValue !== "0" && props.setBooksSIG) {
-                app.bookService.getBooksByCategory(selectedValue).then((res: BookGetDTO[] | undefined): void => {
+                app.bookService.getBooksByCategory(select.options[select.selectedIndex].text).then((res: BookGetDTO[] | undefined): void => {
+                    if (res) {
+                        props.setBooksSIG!(res);
+                    } else {
+                        props.setBooksSIG!([]);
+                    }
+                });
+            }
+            if (props.search && selectedValue == "0") {
+                app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
                     if (res) {
                         props.setBooksSIG!(res);
                     } else {
@@ -64,9 +86,9 @@ export default (props: { type: number, search: boolean, setBooksSIG?: (books: Bo
             }
         }
     };
-    
+
     return <>
-        <Form.Select onChange={handleChange}>
+        <Form.Select onChange={handleChange} value={selectedValue()}>
             <Show when={props.search === true}>
                 <option value="0" selected>Search Category</option>
             </Show>

@@ -1,19 +1,25 @@
 import {
     createSignal,
     JSX,
-    useContext
+    Match,
+    onMount,
+    Show,
+    Switch
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 
 import { Button, Card } from "solid-bootstrap";
 
-import { BookGetDTO, BookPostDTO } from "../../../../interfaces/book.interfaces";
+import { BookGetDTO, BookPatchDTO, BookPostDTO } from "../../../../interfaces/book.interfaces";
 
 import DropdownUtil from "../../../utility/dropdown-util";
-import { AppService } from "../../../../services/app.service";
-import { DIContextProvider } from "../../../../services/di-context-provider.service";
 
-export default (props: { book?: BookGetDTO, handleSubmit: (e: Event, formData: any) => void }): JSX.Element => {
+
+export default (props: { 
+    book?: BookGetDTO, 
+    mode: number, 
+    handleSubmit: (e: Event, formData: any, bookId?: number) => void 
+}): JSX.Element => {
     const navigate = useNavigate();
 
     const [title, setTitle] = createSignal('');
@@ -23,20 +29,51 @@ export default (props: { book?: BookGetDTO, handleSubmit: (e: Event, formData: a
     const [isAvailable, setIsAvailable] = createSignal(false);
     const [numInLib, setNumInLib] = createSignal('');
     const [quality, setQuality] = createSignal('');
-    
+
+    onMount(() => {
+        console.log(props.book);
+        if (props.book) {
+            setTitle(props.book.Title || '');
+            setAuthor(props.book.AuthorId?.toString() || '');
+            setCategory(props.book.CategoryId?.toString() || '');
+            setDesc(props.book.Description || '');
+            setIsAvailable(props.book.IsAvailable ?? false);
+            setNumInLib(props.book.NumberInLibrary?.toString() || '');
+            setQuality(props.book.BookQuality?.toString() || '');
+        }
+    });    
+
     const handleFormSubmit = (e: Event) => {
         e.preventDefault();
         const book: BookPostDTO = {
-            Title: title() || undefined,
+            Title: title(),
             AuthorId: parseInt(author()),
             CategoryId: parseInt(category()),
-            Description: desc() || undefined,
-            IsAvailable: isAvailable() || undefined,
-            NumberInLibrary: numInLib() ? numInLib().toString() : undefined,
+            Description: desc() || "",
+            IsAvailable: isAvailable(),
+            NumberInLibrary: numInLib().toString(),
             BookQuality: parseInt(quality())
-        };        
+        };
+
+        const patchBook: BookPatchDTO = {
+            Title: title(),
+            AuthorId: parseInt(author()),
+            CategoryId: parseInt(category()),
+            Description: desc() || "",
+            IsAvailable: isAvailable(),
+            NumberInLibrary: numInLib().toString(),
+            BookQuality: parseInt(quality())
+        };
+
+        if (props.mode == 0) {
+            // modify
+            props.handleSubmit(e, patchBook, props.book?.Id);
+        } else {
+            // create
+            props.handleSubmit(e, book);
+        }
         
-        props.handleSubmit(e, book);
+        
     };
 
     return <>
@@ -60,12 +97,12 @@ export default (props: { book?: BookGetDTO, handleSubmit: (e: Event, formData: a
 
                 <div class="mb-3">
                     <label for="author" class="form-label">Author</label>
-                    <DropdownUtil type={0} search={false} setAuthor={setAuthor} />
+                    <DropdownUtil type={0} search={false} setAuthor={setAuthor} value={author()}/>
                 </div>
 
                 <div class="mb-3">
                     <label for="category" class="form-label">Category</label>
-                    <DropdownUtil type={1} search={false} setCategory={setCategory}></DropdownUtil>
+                    <DropdownUtil type={1} search={false} setCategory={setCategory} value={category()}></DropdownUtil>
                 </div>
 
                 <div class="mb-3">
@@ -79,14 +116,18 @@ export default (props: { book?: BookGetDTO, handleSubmit: (e: Event, formData: a
                     />
                 </div>
 
-                <div class="mb-3">
-                    <label for="isAvailable" class="form-label">Availability</label>
-                    <input id="isAvailable" class="form-check-input" type="checkbox" required
+                <div class="mb-3 d-flex align-items-center gap-2">
+                    <label for="isAvailable" class="form-label mb-0">Availability</label>
+                    <input
+                        id="isAvailable"
+                        class="form-check-input"
+                        type="checkbox"
                         checked={isAvailable()}
                         onChange={(e) => setIsAvailable(e.currentTarget.checked)}
                     />
-
                 </div>
+
+
 
                 <div class="mb-3">
                     <label for="numInLib" class="form-label">Number in library</label>
@@ -102,12 +143,20 @@ export default (props: { book?: BookGetDTO, handleSubmit: (e: Event, formData: a
 
                 <div class="mb-3">
                     <label for="quality" class="form-label">Quality</label>
-                    <DropdownUtil type={2} search={false} setQuality={setQuality}></DropdownUtil>
+                    <DropdownUtil type={2} search={false} setQuality={setQuality} value={quality()}></DropdownUtil>
                 </div>
 
                 <div class="d-flex gap-2 mt-auto">
                     <Button class="btn btn-primary w-100" variant="danger" onClick={() => { navigate('/books') }}>Cancel</Button>
-                    <Button type="submit" class="btn btn-primary w-100" variant="success">Create</Button>
+
+                    <Switch>
+                        <Match when={props.book !== undefined}>
+                            <Button type="submit" class="btn btn-primary w-100" variant="success">Update</Button>
+                        </Match>
+                        <Match when={props.book == undefined}>
+                            <Button type="submit" class="btn btn-primary w-100" variant="success">Create</Button>
+                        </Match>
+                    </Switch>
                 </div>
             </form>
         </Card.Body>
