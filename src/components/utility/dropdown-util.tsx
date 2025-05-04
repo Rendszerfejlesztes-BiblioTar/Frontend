@@ -13,8 +13,6 @@ export default (props: { value: string, type: number, search: boolean, setBooksS
     const [categorySig, setCategorySig] = createSignal<CategoryGetDTO[]>([]);
     const [selectedValue, setSelectedValue] = createSignal<string>("");
 
-    
-
     onMount(() => {
         if (props.type === 0) {
             app.authorService.getAuthors().then((res) => {
@@ -34,8 +32,13 @@ export default (props: { value: string, type: number, search: boolean, setBooksS
                 if (res) {
                     setCategorySig(res);
                     const selected = props.value || "1";
-                    setSelectedValue(selected);
-                    props.setCategory?.(selected);
+                    if (props.search) {
+                        setSelectedValue("0");
+                    }
+                    else {
+                        setSelectedValue(selected);
+                        props.setCategory?.(selected);
+                    }
                 } else {
                     setCategorySig([]);
                 }
