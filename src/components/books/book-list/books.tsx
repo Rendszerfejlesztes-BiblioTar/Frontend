@@ -48,19 +48,20 @@ export default (): JSX.Element => {
         <div class="row" style={{
             "margin-top": '1rem', "margin-left": '0.25rem', "margin-right": '0.25rem',
         }}>
-            <Show when={booksSIG().length !== 0}>
-                <For each={booksSIG()}>
-                    {(book: BookGetDTO): JSX.Element => {
-                        return <div class="col-2 d-flex justify-content-center mb-4">
-                            <BookCard
-                                book={book}
-                                onClick={(): void => { navigate(book.Id) }}
-                            />
-                        </div>
-                    }}
-                </For>
-            </Show>
-            <Show when={booksSIG().length === 0}>
+        <Show when={booksSIG().length !== 0}>
+            <For each={booksSIG()}>
+                {(book: BookGetDTO): JSX.Element => {
+                    return <div class="col-2 d-flex justify-content-center mb-4">
+                        <BookCard
+                            book={book}
+                            onClick={(): void => { navigate(book.Id) }}
+                            onDelete={() => setBooksSIG(prev => prev.filter(b => b.Id !== book.Id))}
+                        />
+                    </div>
+                }}
+            </For>
+         </Show>
+         <Show when={booksSIG().length === 0}>
                 <BookCardSkeleton />
                 <BookCardSkeleton />
                 <BookCardSkeleton />

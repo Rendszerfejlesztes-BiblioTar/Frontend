@@ -15,6 +15,7 @@ export interface BookPatchDTO {
     Title?: string;
     AuthorId?: number;
     CategoryId?: number;
+    Description?: string;
     IsAvailable?: boolean;
     NumberInLibrary?: string;
     BookQuality?: number;

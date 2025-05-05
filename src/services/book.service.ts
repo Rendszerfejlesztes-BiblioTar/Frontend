@@ -152,7 +152,7 @@ export class BookService {
      * */
     public async patchBook(id: number, book: BookPatchDTO): Promise<boolean | undefined> {
         try {
-            const res: Response = await this.httpService.Post(`book/${id}`, book);
+            const res: Response = await this.httpService.Patch(`book/${id}`, book);
 
             return res.ok;
         } catch (error) {
