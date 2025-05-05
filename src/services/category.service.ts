@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 
 import { HttpService } from "./http.service";
-import {CategoryGetDTO, CategoryNameDTO} from "../interfaces/category.interfaces";
+import {CategoryDeleteDTO, CategoryGetDTO, CategoryPostDTO, CategoryPutDTO} from "../interfaces/category.interfaces";
 
 @injectable()
 export class CategoryService {
@@ -55,7 +55,7 @@ export class CategoryService {
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<CategoryGetDTO | undefined>}
      * */
-    public async postCategory(category: CategoryNameDTO): Promise<CategoryGetDTO | undefined> {
+    public async postCategory(category: CategoryPostDTO): Promise<CategoryGetDTO | undefined> {
         try {
             const res: Response = await this.httpService.Post('Category', category);
 
@@ -74,7 +74,7 @@ export class CategoryService {
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<CategoryGetDTO | undefined>}
      * */
-    public async putCategory(id: number, category: CategoryNameDTO): Promise<CategoryGetDTO | undefined> {
+    public async putCategory(id: number, category: CategoryPutDTO): Promise<CategoryGetDTO | undefined> {
         try {
             const res: Response = await this.httpService.Put(`Category/${id}`, category);
 
@@ -93,7 +93,7 @@ export class CategoryService {
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<boolean | undefined>}
      * */
-    public async deleteCategory(id: number): Promise<boolean | undefined> {
+    public async deleteCategory(id: number, requester: CategoryDeleteDTO): Promise<boolean | undefined> {
         try {
             const res: Response = await this.httpService.Delete(`Category/${id}`);
 

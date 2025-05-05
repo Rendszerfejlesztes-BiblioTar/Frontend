@@ -5,8 +5,14 @@ export interface AuthorGetDTO {
 
 export interface AuthorPostDTO {
     Name: string;
+    RequesterEmail: string;
 }
 
-export interface AuthorPatchDTO {
+export interface AuthorPutDTO {
     Name: string;
+    RequesterEmail: string;
+}
+
+export interface AuthorDeleteDTO {
+    RequesterEmail: string;
 }
