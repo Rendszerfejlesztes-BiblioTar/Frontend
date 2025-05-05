@@ -27,6 +27,7 @@ export default (): JSX.Element => {
   const Login = lazy(() => import('./auth/login/login'));
   const Register = lazy(() => import('./auth/register/register'));
   const UserProfile = lazy(() => import('./user-profile/user-profile'));
+  const ProtectedRoute = lazy(() => import('./protected-route'));
 
   const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
 
@@ -42,11 +43,17 @@ export default (): JSX.Element => {
     console.log('user: ', user());
   });
 
-  const BookCreate = () => <Book mode={'create'} />
+  /* Book wrappers */
+  const BookCreate = () => <ProtectedRoute privilege={user()!.Privilege} reqPrivilege={0} defPath={'/books'} children={<Book mode={'create'} />} />
   const BookView = () => <Book mode={'view'} />
 
+  /* Admin wrapper */
+  const AdminPage = () => <ProtectedRoute privilege={user()!.Privilege} reqPrivilege={0} defPath={'/home'} children={<Admin />} />
+
+  /* Librarian wrapper */
+  const LibrarianPage = () => <ProtectedRoute privilege={user()!.Privilege} reqPrivilege={1} defPath={'/home'} children={<Librarian />} />
+
   return <>
-    
     <div
         style={{
           width:'100%',
@@ -57,7 +64,7 @@ export default (): JSX.Element => {
           "min-height": '100vh'
         }}
     >
-      <NavbarUtil></NavbarUtil>
+      <NavbarUtil />
       <Router>
         {/* Redirects */}
         <Route path={'/'} component={(): JSX.Element => {
@@ -74,8 +81,8 @@ export default (): JSX.Element => {
         <Route path={'/register'} component={Register} />
 
         {/* Auth paths */}
-        <Route path={'/admin'} component={Admin} />
-        <Route path={'/librarian'} component={Librarian} />
+        <Route path="/admin" component={AdminPage}/>
+        <Route path={'/librarian'} component={LibrarianPage} />
         <Route path={'/profile'} component={UserProfile} />
         <Route path={'/books/create'} component={BookCreate} />
 

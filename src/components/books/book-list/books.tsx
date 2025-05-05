@@ -14,12 +14,13 @@ import { DIContextProvider } from '../../../services/di-context-provider.service
 import { AppService } from '../../../services/app.service';
 
 import { BookGetDTO } from '../../../interfaces/book.interfaces';
+import { RegisteredUser } from '../../../interfaces/authentication.interfaces';
 
 import BookCard from '../book-card/book-card';
 
 import SearchUtil from '../../utility/search-util';
 import NewButtonUtil from '../../utility/newButton-util';
-import { RegisteredUser } from '../../../interfaces/authentication.interfaces';
+import BookCardSkeleton from "./book-card-skeleton";
 
 export default (): JSX.Element => {
     const navigator = useNavigate();
@@ -47,6 +48,7 @@ export default (): JSX.Element => {
         <div class="row" style={{
             "margin-top": '1rem', "margin-left": '0.25rem', "margin-right": '0.25rem',
         }}>
+        <Show when={booksSIG().length !== 0}>
             <For each={booksSIG()}>
                 {(book: BookGetDTO): JSX.Element => {
                     return <div class="col-2 d-flex justify-content-center mb-4">
@@ -58,6 +60,12 @@ export default (): JSX.Element => {
                     </div>
                 }}
             </For>
+         </Show>
+         <Show when={booksSIG().length === 0}>
+                <BookCardSkeleton />
+                <BookCardSkeleton />
+                <BookCardSkeleton />
+            </Show>
         </div>
         <Show when={user() && user()!.Privilege === 0}>
             <NewButtonUtil></NewButtonUtil>
