@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 
 import { HttpService } from "./http.service";
-import {AuthorGetDTO, AuthorPatchDTO, AuthorPostDTO} from "../interfaces/author.interfaces";
+import {AuthorDeleteDTO, AuthorGetDTO, AuthorPutDTO, AuthorPostDTO} from "../interfaces/author.interfaces";
 
 @injectable()
 export class AuthorService {
@@ -67,9 +67,9 @@ export class AuthorService {
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<AuthorGetDTO | undefined>}
      * */
-    public putAuthor(id: number, author: AuthorPatchDTO): Promise<AuthorGetDTO | undefined> {
+    public putAuthor(id: number, author: AuthorPutDTO): Promise<AuthorGetDTO | undefined> {
         return new Promise<AuthorGetDTO | undefined>((resolve): void => {
-            this.httpService.Put(`Author`, author).then((res: Response): void => {
+            this.httpService.Put(`Author/${id}`, author).then((res: Response): void => {
                 if (res.ok) {
                     resolve(res.json() as unknown as AuthorGetDTO);
                 } else {
@@ -84,9 +84,9 @@ export class AuthorService {
      * Returns a Promise that contains the result from the API fetch.
      * @returns {Promise<boolean | undefined>}
      * */
-    public deleteAuthor(id: number): Promise<boolean | undefined> {
+    public deleteAuthor(id: number, requester: AuthorDeleteDTO): Promise<boolean | undefined> {
         return new Promise<boolean | undefined>((resolve): void => {
-            this.httpService.Put(`Author/${id}`).then((res: Response): void => {
+            this.httpService.Delete(`Author/${id}`, requester).then((res: Response): void => {
                 if (res.ok) {
                     resolve(true);
                 } else {

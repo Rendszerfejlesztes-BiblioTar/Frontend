@@ -4,21 +4,22 @@ import { HttpService } from "./http.service";
 
 import {
     Authentication,
-    ChangeCredentials,
     BooleanAnswer,
     LoginAnswer,
     RegisterAnswer,
     RegisteredUser,
-    Contact,
-    ChangePrivilege,
-    AllUsers,
-    AdminAnswer
 } from "../interfaces/authentication.interfaces";
 import { BehaviorSubject, Observable } from "rxjs";
 
 @injectable()
 export class AuthenticationService {
     private readonly httpService: HttpService;
+    private interval: NodeJS.Timeout | null = null;
+
+    private expiresAt: Date | null = null;
+
+    private refreshToken: string | null = null;
+
     private token: BehaviorSubject<string | undefined> = new BehaviorSubject<string | undefined>(undefined);
     public token$: Observable<string | undefined> = this.token.asObservable();
 
@@ -29,10 +30,19 @@ export class AuthenticationService {
         this.httpService = httpService;
     }
 
-    public async checkIfAuthenticated(): Promise<void> {
+    /**
+     * Checks the localStorage for token, if there is, and it isn't expired then asks the API for the users data.
+     * @returns {Promise<void | undefined>}
+     * */
+    public async checkIfAuthenticated(): Promise<void | undefined> {
         const foundToken: string | null = localStorage.getItem("accessToken");
+        const foundExpiration: string | null = localStorage.getItem("expiresAt");
+        const foundExpirationInNumber: number = foundExpiration ? new Date(Number.parseInt(foundExpiration)).getTime() : NaN;
+        const EXPIRED_OR_ISNAN: boolean = !Number.isNaN(foundExpirationInNumber) && foundExpirationInNumber < new Date().getTime();
 
-        if (!foundToken) {
+        if (!foundToken || !foundExpiration || EXPIRED_OR_ISNAN) {
+            this.resetState();
+            this.clearInterval();
             return;
         }
 
@@ -41,13 +51,22 @@ export class AuthenticationService {
         this.getLoggedInUsersData().then((res: RegisteredUser | undefined ) : void => {
             if (res) {
                 this.user.next(res);
+                this.expiresAt = new Date(foundExpiration!);
+                this.refreshToken = localStorage.getItem("refreshToken");
+
                 return;
             }
-
-            this.resetState();
+            else {
+                this.resetState();
+            }
         });
     }
 
+    /**
+     * Takes the credentials and tries to register it as a new user.
+     * @param register {Authentication}
+     * @returns {Promise<RegisterAnswer | undefined>}
+     * */
     public async register(register: Authentication): Promise<RegisterAnswer | undefined> {
         try {
             const res: Response = await this.httpService.Post('users/register', register)
@@ -63,6 +82,11 @@ export class AuthenticationService {
         return undefined;
     }
 
+    /**
+     * Takes the credentials and tries to log the user in.
+     * @param credentials {Authentication}
+     * @returns {Promise<LoginAnswer | string>}
+     * */
     public async login(credentials: Authentication): Promise<LoginAnswer | string> {
         try {
             const res: Response = await this.httpService.Post('users/login', credentials);
@@ -79,10 +103,16 @@ export class AuthenticationService {
 
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
-            localStorage.setItem('expiresAt', expiresAt.toDateString());
+            localStorage.setItem('expiresAt', `${expiresAt.getTime()}`);
 
             this.token.next(accessToken);
             this.user.next(data.Data?.User);
+
+            this.expiresAt = new Date(expiresAt);
+            this.refreshToken = refreshToken;
+
+            this.clearInterval();
+            this.setInterval();
 
             return data;
         } catch (error) {
@@ -91,43 +121,17 @@ export class AuthenticationService {
         }
     }
 
-    public async changeLogin(credentials: ChangeCredentials): Promise<BooleanAnswer | undefined> {
+    /**
+     * Takes the refresh token and tries to refresh the authentication.
+     * @returns {Promise<LoginAnswer | undefined>}
+     * */
+    public async refreshAuth(): Promise<LoginAnswer | undefined> {
         try {
-            const res: Response = await this.httpService.Put('users/login', credentials);
+            const res: Response = await this.httpService.Post('users/refresh', this.refreshToken);
 
             if (!res.ok) {
-                return undefined
-            }
+                this.clearInterval();
 
-            return await res.json();
-        } catch (error) {
-            console.log('Change login error:', error);
-        }
-
-        return undefined;
-    }
-
-    public async createAdmin(credentials: Authentication): Promise<BooleanAnswer | undefined> {
-        try {
-            const res: Response = await this.httpService.Post('users/create-admin', credentials);
-
-            if (!res.ok) {
-                return undefined;
-            }
-
-            return await res.json();
-        } catch (error) {
-            console.log('Create admin error: ', error)
-        }
-
-        return undefined
-    }
-
-    public async refreshToken(refreshToken: string): Promise<LoginAnswer | undefined> {
-        try {
-            const res: Response = await this.httpService.Post('users/refresh', refreshToken);
-
-            if (!res.ok) {
                 return undefined;
             }
 
@@ -139,6 +143,10 @@ export class AuthenticationService {
         return  undefined;
     }
 
+    /**
+     * Clears the localStorage and throws all the user data from memory. Basically logging the user out.
+     * @returns {Promise<BooleanAnswer | undefined>}
+     * */
     public async logout(): Promise<BooleanAnswer | undefined> {
         try {
             const res: Response = await this.httpService.Post('users/logout');
@@ -157,16 +165,10 @@ export class AuthenticationService {
         return undefined;
     }
 
-    private resetState(): void {
-        console.log('RESETING STATE');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('expiresAt');
-
-        this.token.next(undefined);
-        this.user.next({ Email: '', Privilege: 3, PrivilegeString: 'Unregistered'});
-    }
-
+    /**
+     * Taking the JWT token and asking the API for the Users data.
+     * @returns {Promise<RegisteredUser | undefined>}
+     * */
     public async getLoggedInUsersData(): Promise<RegisteredUser | undefined> {
         try {
             const res: Response = await this.httpService.Get('users');
@@ -188,82 +190,56 @@ export class AuthenticationService {
         }
     }
 
-    public async changeContact(contact: Contact): Promise<BooleanAnswer | undefined> {
-        try {
-            const res: Response = await this.httpService.Put('users/contact', contact);
+    private checkIfStillAuthenticated(): void {
+        if (this.token === null) {
+            this.clearInterval();
 
-            if (!res.ok) {
-                return undefined;
-            }
-
-            return await res.json();
-        } catch (error) {
-            console.log('Change contact error: ', error)
+            return;
         }
 
-        return undefined;
-    }
+        if (this.expiresAt === null) {
+            this.clearInterval();
 
-    public async changePrivilege(privilege: ChangePrivilege): Promise<BooleanAnswer | undefined> {
-        try {
-            const res: Response = await this.httpService.Put('users/privilege', privilege);
-
-            if (!res.ok) {
-                return undefined;
-            }
-
-            return await res.json();
-        } catch (error) {
-            console.log('Privilege change error: ', error)
+            return;
         }
-    }
 
-    public async deleteUser(email: string): Promise<BooleanAnswer | undefined> {
-        try {
-            const res: Response = await this.httpService.Delete(`users/${email}`);
+        const NOW: Date = new Date();
+        const TIME_REMAINING: number = this.expiresAt!.getTime() - NOW.getTime();
 
-            if (!res.ok) {
-                return undefined;
-            }
+        if (TIME_REMAINING <= 60000) {
+            this.refreshAuth();
+        }
 
+        if (TIME_REMAINING < 0) {
             this.resetState();
-            return await res.json();
-        } catch (error) {
-            console.log('User delete error: ', error);
+            this.clearInterval();
         }
-
-        return undefined;
     }
 
-    public async getAllUsers(): Promise<AllUsers | undefined> {
-        try {
-            const res: Response = await this.httpService.Get('users/get-all-users');
+    private resetState(): void {
+        console.log('RESETING STATE');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('expiresAt');
 
-            if (!res.ok) {
-                return undefined;
-            }
+        this.token.next(undefined);
+        this.user.next({ Email: '', Privilege: 3, PrivilegeString: 'Unregistered'});
+        this.refreshToken = null;
+        this.expiresAt = null;
 
-            return await res.json();
-        } catch (error) {
-            console.log('Get all users error: ', error);
-        }
-
-        return undefined;
+        this.clearInterval();
     }
 
-    public async createDefaultAdmin(): Promise<AdminAnswer | undefined> {
-        try {
-            const res: Response = await this.httpService.Post('users/create-default-admin');
+    private setInterval(): void {
+        this.interval = setInterval((): void => {
+            this.checkIfStillAuthenticated();
+        }, 60000);
+    }
 
-            if (!res.ok) {
-                return undefined;
-            }
-
-            return await res.json();
-        } catch (error) {
-            console.log('Error creating default admin: ', error);
+    private clearInterval(): void {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
         }
-
-        return undefined;
     }
 }

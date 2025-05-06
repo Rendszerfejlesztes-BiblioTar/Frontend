@@ -68,12 +68,13 @@ export class HttpService {
         );
     }
 
-    public Delete(path: string): Promise<Response> {
+    public Delete(path: string, body?: any): Promise<Response> {
         return fetch(
             this.serverURL + path,
             {
                 'method': 'DELETE',
                 'headers': this.getHeaders(),
+                'body': JSON.stringify(body ?? {}) ?? '{}'
             }
         );
     }

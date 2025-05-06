@@ -26,7 +26,7 @@ export default (): JSX.Element => {
 
         app.authentication.login({Email: email(), Password: password()}).then((res => {
             if (typeof res !== 'string') {
-                navigate('/Home');
+                navigate('/Books');
             } else {
                 setError(res);
             }
