@@ -86,7 +86,7 @@ export class AuthorService {
      * */
     public deleteAuthor(id: number, requester: AuthorDeleteDTO): Promise<boolean | undefined> {
         return new Promise<boolean | undefined>((resolve): void => {
-            this.httpService.Delete(`Author/${id}`).then((res: Response): void => {
+            this.httpService.Delete(`Author/${id}`, requester).then((res: Response): void => {
                 if (res.ok) {
                     resolve(true);
                 } else {

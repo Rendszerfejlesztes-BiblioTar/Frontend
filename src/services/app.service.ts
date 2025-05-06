@@ -1,11 +1,12 @@
 import { singleton } from "tsyringe";
 
-import { AuthenticationService } from "./authenticationService";
+import { AuthenticationService } from "./authentication.service";
 import { AuthorService } from "./author.service";
 import { BookService } from "./book.service";
 import { HttpService } from "./http.service";
 import { CategoryService } from "./category.service";
 import { LoanService } from "./loan.service";
+import { UserService } from "./user.service";
 
 @singleton()
 export class AppService {
@@ -15,6 +16,7 @@ export class AppService {
     public bookService!: BookService;
     public categoryService!: CategoryService;
     public loanService!: LoanService;
+    public userService!: UserService;
 
     constructor() {
         const server_url: string = import.meta.env.VITE_API;
@@ -27,5 +29,6 @@ export class AppService {
         this.bookService = new BookService(this.httpService);
         this.categoryService = new CategoryService(this.httpService);
         this.loanService = new LoanService(this.httpService);
+        this.userService = new UserService(this.httpService);
     }
 }
