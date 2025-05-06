@@ -18,40 +18,45 @@ export default (): JSX.Element => {
     const token: Accessor<string | undefined> = from(app.authentication.token$);
     const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
 
-    return <Navbar  variant="dark" expand="lg" style={{ background: '#402208'}}>
-        <Container>
-            <Navbar.Brand>Bibliotár</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav class="me-auto">
-                    {/* Base pages */}
-                    <Nav.Link href="/home">Home</Nav.Link>
-                    <Nav.Link href="/books">Books</Nav.Link>
-
-                    {/* Role specific pages */}
-                    <Show when={user()!.Privilege < 2}>
-                        <Nav.Link href="/librarian">Manage Library</Nav.Link>
-                    </Show>
-                    <Show when={user()!.Privilege === 0}>
-                        <Nav.Link href="/admin">Admin</Nav.Link>
-                    </Show>
-
-                    {/* User profile */}
-                    <Show when={user() !== undefined}>
-                        <Nav.Link href="/profile">User Profile</Nav.Link>
-                    </Show>
-
-                    {/* Authentication */}
-                    <Show when={user()!.Privilege !== 3}>
-                        <Nav.Link href="/" onClick={(): void => {
-                            app.authentication.logout();
-                        }}>Logout</Nav.Link>
-                    </Show>
-                    <Show when={token() === undefined || token() === ''}>
-                        <Nav.Link href="/login">Login</Nav.Link>
-                    </Show>
-                </Nav>
-            </Navbar.Collapse>
-        </Container>
-    </Navbar>
+    return (
+        <Navbar variant="dark" expand="lg" style={{ background: '#402208' }}>
+            <Container fluid>
+                <Navbar.Brand class="me-auto">Bibliotár</Navbar.Brand>
+                <div class="vr mx-3"></div>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav class="me-auto">
+                        {/* Normal paths */}
+                        <Nav.Link href="/home">Home</Nav.Link>
+                        <Nav.Link href="/books">Books</Nav.Link>
+    
+                        {/* Authenticated paths */}
+                        <Show when={user()!.Privilege < 2}>
+                            <Nav.Link href="/librarian">Manage Library</Nav.Link>
+                        </Show>
+                        <Show when={user()!.Privilege === 0}>
+                            <Nav.Link href="/admin">Admin</Nav.Link>
+                        </Show>
+                        <Show when={user() !== undefined}>
+                            <Nav.Link href="/profile">User Profile</Nav.Link>
+                        </Show>
+                    </Nav>
+                    
+                    {/* Login/Logout */}
+                    <Nav class="ms-auto">
+                        <Show when={user()!.Privilege !== 3}>
+                            <Navbar.Text>Signed in as: {user()!.Email} ({user()!.PrivilegeString})</Navbar.Text>
+                            <div class="vr mx-3"></div>
+                            <Nav.Link href="/" onClick={(): void => {
+                                app.authentication.logout();
+                            }}>Logout</Nav.Link>
+                        </Show>
+                        <Show when={token() === undefined || token() === ''}>
+                            <Nav.Link href="/login">Login</Nav.Link>
+                        </Show>
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
+    );    
 }
