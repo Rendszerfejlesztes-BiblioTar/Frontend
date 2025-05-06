@@ -37,7 +37,7 @@ export default (): JSX.Element => {
                         <Show when={user()!.Privilege === 0}>
                             <Nav.Link href="/admin">Admin</Nav.Link>
                         </Show>
-                        <Show when={user() !== undefined}>
+                        <Show when={user()!.Privilege === 3}>
                             <Nav.Link href="/profile">User Profile</Nav.Link>
                         </Show>
                     </Nav>
