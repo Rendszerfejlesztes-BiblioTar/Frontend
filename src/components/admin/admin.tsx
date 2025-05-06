@@ -7,7 +7,6 @@ import UserEdit from "./actions/user-edit";
 
 export default (): JSX.Element => {
     return<>
-    {/* TODO!!! verify that deleting and updating works with updated service! */}
         <AuthorEdit></AuthorEdit>
         <CategoryEdit></CategoryEdit>
         <UserEdit></UserEdit>
