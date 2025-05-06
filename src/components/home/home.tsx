@@ -29,6 +29,7 @@ export default (): JSX.Element => {
             <Card.Body>
               <Card.Title
                 style={{
+                  'animation': 'fadeInDown 0.5s ease-out',
                   "font-size": "2.5rem",
                   "margin-bottom": "1.5rem",
                   "text-align": "center",
@@ -41,6 +42,7 @@ export default (): JSX.Element => {
               </Card.Title>
               <Card.Text
                 style={{
+                    'animation': 'fadeIn 1s ease-out',
                   "font-size": "1.2rem",
                   "text-align": "justify",
                   "text-indent": "2em",

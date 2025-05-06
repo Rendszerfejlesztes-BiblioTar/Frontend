@@ -36,6 +36,7 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
 
     return <Card
         style={{
+            animation: 'zoomIn 0.3s ease-out',
             width: '15rem',
             height: '100%',
             cursor: 'pointer',

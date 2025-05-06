@@ -31,16 +31,10 @@ export default (): JSX.Element => {
 
   const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
 
-  const token: Accessor<string | undefined> = from(app.authentication.token$);
   const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
 
   onMount((): void => {
     app.authentication.checkIfAuthenticated();
-  });
-
-  createEffect((): void => {
-    console.log('token: ', token());
-    console.log('user: ', user());
   });
 
   /* Book wrappers */
