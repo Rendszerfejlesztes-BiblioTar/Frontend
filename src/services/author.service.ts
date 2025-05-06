@@ -69,7 +69,7 @@ export class AuthorService {
      * */
     public putAuthor(id: number, author: AuthorPutDTO): Promise<AuthorGetDTO | undefined> {
         return new Promise<AuthorGetDTO | undefined>((resolve): void => {
-            this.httpService.Put(`Author`, author).then((res: Response): void => {
+            this.httpService.Put(`Author/${id}`, author).then((res: Response): void => {
                 if (res.ok) {
                     resolve(res.json() as unknown as AuthorGetDTO);
                 } else {

@@ -102,7 +102,7 @@ export default (): JSX.Element => {
             <Card class="shadow rounded" style={{ width: '80vw', "max-width": '90vw', padding: '1rem' }}>
                 <h2 style={{ "font-size": '2rem', "margin-bottom": '1rem', "text-align": 'center' }}>Categories</h2>
 
-                <div style={{ width: '95%', margin: '0 auto' }}>
+                <div class="table-responsive" style={{ width: '95%', margin: '0 auto' }}>
                     <Table bordered hover>
                         <thead>
                             <tr>
