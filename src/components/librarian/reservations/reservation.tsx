@@ -6,36 +6,82 @@ import {
     Show,
     useContext
 } from "solid-js";
-import {Button, Card, FormControl, Table} from "solid-bootstrap";
+import {Button, Card, Table} from "solid-bootstrap";
 
 
 import {DIContextProvider} from "../../../services/di-context-provider.service";
 import {AppService} from "../../../services/app.service";
 
 import {Reservation} from "../../../interfaces/reservation.interfaces";
+import {Loan, LoanPost} from "../../../interfaces/loan.interfaces";
 
-export default (): JSX.Element => {
+export default (props: {onReservationChange: () => void}): JSX.Element => {
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
 
     const [reservationsSIG, setReservationsSIG] = createSignal<Reservation[]>([]);
 
     onMount((): void => {
+        fetchData();
+    });
+
+    const fetchData = (): void => {
         app.reservationService.getAllReservations().then((res: Reservation[] | undefined): void => {
             if (res) {
-                console.log(' res',res);
                 setReservationsSIG(res);
             }
         });
-    });
+    }
 
+    const handleAccept = async (reservation: Reservation): Promise<void> => {
+        let newReservation: Reservation = reservation;
+
+        newReservation.IsAccepted = true;
+        await app.reservationService.patchReservation(newReservation);
+
+        fetchData();
+    }
+
+    const handelDelete = async (reservation: Reservation): Promise<void> => {
+        await app.reservationService.deleteReservation(reservation.Id);
+    }
+
+    const handleConvertToLoan = async (reservation: Reservation): Promise<void> => {
+        const loan: LoanPost = {
+            BookId: reservation.BookId,
+            UserEmail: reservation.UserEmail,
+            StartTime: new Date().toISOString()
+        }
+
+        const res: Loan | undefined = await app.loanService.postLoan(loan)
+
+        if (res) {
+            props.onReservationChange();
+
+            await app.reservationService.deleteReservation(reservation.Id);
+            fetchData();
+        }
+    }
+
+    const handleCancel = async (reservation: Reservation): Promise<void> => {
+        let newReservation: Reservation = reservation;
+
+        newReservation.IsAccepted = false;
+        await app.reservationService.patchReservation(newReservation);
+
+        app.reservationService.getAllReservations().then((res: Reservation[] | undefined): void => {
+            if (res) {
+                setReservationsSIG(res);
+            }
+        });
+    }
 
     return <>
         <div
             class="d-flex justify-content-center"
             style={{"max-height": '100%', "overflow-y": 'auto', padding: '2rem'}}
         >
-            <Card>
+            <Card class="shadow rounded" style={{ width: '80vw', "max-width": '90vw', padding: '1rem' }}>
                 <Card.Body>
                     <Card.Title
                         style={{
@@ -53,16 +99,15 @@ export default (): JSX.Element => {
                     <div class="table-responsive" style={{width: '95%', margin: '0 auto'}}>
                         <Table bordered hover>
                             <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>BookId</th>
-                                <th>User Email</th>
-                                <th>Reservation date</th>
-                                <th>Expected start date</th>
-                                <th>Expected end</th>
-                                <th>Accepted</th>
-                                <th>Edit</th>
-                            </tr>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>BookId</th>
+                                    <th>User Email</th>
+                                    <th>Reservation date</th>
+                                    <th>Expected start date</th>
+                                    <th>Expected end</th>
+                                    <th>Edit</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <For each={reservationsSIG()}>
@@ -70,23 +115,22 @@ export default (): JSX.Element => {
                                     <Show
                                         when={res.IsAccepted}
                                         fallback={
-                                        <tr>
-                                            <td>{res.Id}</td>
-                                            <td>{res.BookId}</td>
-                                            <td>{res.UserEmail}</td>
-                                            <td>{res.ReservationDate}</td>
-                                            <td>{res.ExpectedStart}</td>
-                                            <td>{res.ExpectedEnd}</td>
-                                            <td>{res.IsAccepted}</td>
-                                            <td>
-                                                <div class="d-flex justify-content-between gap-2">
-                                                    <Button variant="primary" onClick={() => console.log('')}
-                                                            style={{width: '5rem', "min-width": '5rem'}}>Accept</Button>
-                                                    <Button variant="danger" onClick={() => console.log('')}
-                                                            style={{width: '5rem', "min-width": '5rem'}}>Delete</Button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td>{res.Id}</td>
+                                                <td>{res.BookId}</td>
+                                                <td>{res.UserEmail}</td>
+                                                <td>{res.ReservationDate}</td>
+                                                <td>{res.ExpectedStart}</td>
+                                                <td>{res.ExpectedEnd}</td>
+                                                <td>
+                                                    <div class="d-flex justify-content-between gap-2">
+                                                        <Button variant="primary" onClick={() => handleAccept(res)}
+                                                                style={{width: '5rem', "min-width": '5rem'}}>Accept</Button>
+                                                        <Button variant="danger" onClick={() => handelDelete(res)}
+                                                                style={{width: '5rem', "min-width": '5rem'}}>Delete</Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         }
                                     >
                                         <tr>
@@ -96,12 +140,11 @@ export default (): JSX.Element => {
                                             <td>{res.ReservationDate}</td>
                                             <td>{res.ExpectedStart}</td>
                                             <td>{res.ExpectedEnd}</td>
-                                            <td>{res.IsAccepted}</td>
                                             <td>
                                                 <div class="d-flex justify-content-between gap-2">
-                                                    <Button variant="success" onClick={() => console.log('starting loan')}
+                                                    <Button variant="success" onClick={() => handleConvertToLoan(res)}
                                                             style={{width: '5rem', "min-width": '5rem'}}>Start Loan</Button>
-                                                    <Button variant="danger" onClick={() => console.log('cancel')}
+                                                    <Button variant="danger" onClick={() => handleCancel(res)}
                                                             style={{width: '5rem', "min-width": '5rem'}}>Cancel</Button>
                                                 </div>
                                             </td>

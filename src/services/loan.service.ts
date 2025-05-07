@@ -69,9 +69,9 @@ export class LoanService {
     /**
      *
      * */
-    public async patchLoan(loan: LoanPatch): Promise<Loan | undefined> {
+    public async patchLoan(loanId: number, loan: LoanPatch): Promise<Loan | undefined> {
         try {
-            const res: Response = await this.httpService.Patch('loan', loan);
+            const res: Response = await this.httpService.Patch(`loan/${loanId}`, loan);
 
             if (res.ok) {
                 return await res.json() as Loan;

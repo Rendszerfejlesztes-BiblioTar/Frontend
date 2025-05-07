@@ -251,7 +251,7 @@ export class AuthenticationService {
             this.resetState();
             return;
         }
-        
+
         this.user.next(user);
 
         this.expiresAt = new Date(expiresAt);
