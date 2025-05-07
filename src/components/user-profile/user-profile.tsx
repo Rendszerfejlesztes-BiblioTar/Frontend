@@ -8,6 +8,7 @@ import {RegisteredUser} from "../../interfaces/authentication.interfaces";
 import DataChangeComponent from "./profile-components/data-change-component";
 import PasswordChangeComponent from "./profile-components/password-change-component";
 import ReservationComponent from "./profile-components/reservation-component";
+import LoanComponent from "./profile-components/loan-component";
 
 export default (): JSX.Element => {
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
@@ -21,6 +22,7 @@ export default (): JSX.Element => {
     return <>
         <DataChangeComponent></DataChangeComponent>
         <PasswordChangeComponent></PasswordChangeComponent>
+        <LoanComponent></LoanComponent>
         <ReservationComponent></ReservationComponent>
     </>
 }

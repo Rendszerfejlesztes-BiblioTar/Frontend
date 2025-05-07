@@ -1,5 +1,5 @@
 export interface Reservation {
-    Id: number;
+    Id?: number;
     BookId: number;
     UserEmail: string;
     IsAccepted: boolean;

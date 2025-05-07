@@ -15,6 +15,7 @@ import { RegisteredUser } from "../../../interfaces/authentication.interfaces";
 import { AppService } from "../../../services/app.service";
 import { DIContextProvider } from "../../../services/di-context-provider.service";
 import { useNavigate } from "@solidjs/router";
+import { Reservation } from "../../../interfaces/reservation.interfaces";
 
 export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => void }): JSX.Element => {
 
@@ -23,7 +24,6 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
     const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
-    const navigate = useNavigate();
 
     if (props.book.Description != null) {
         if (props.book.Description.length > 50) {
@@ -33,6 +33,27 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
             setDescriptionSIG(props.book.Description);
         }
     }
+
+    const makeReservation = async (bookId: number, userEmail: string) => {
+        const now = new Date();
+        const reservationDate = now.toISOString();
+        const expectedStart = reservationDate;
+    
+        const expectedEnd = new Date();
+        expectedEnd.setDate(now.getDate() + 14);
+        const expectedEndStr = expectedEnd.toISOString();
+    
+        const reservation: Reservation = {
+            BookId: bookId,
+            UserEmail: userEmail,
+            IsAccepted: false,
+            ReservationDate: reservationDate,
+            ExpectedStart: expectedStart,
+            ExpectedEnd: expectedEndStr,
+        };
+    
+        await app.reservationService.postReservation(reservation);
+    };
 
     return <Card
         style={{
@@ -60,7 +81,18 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
 
             <Show when={user() && user()!.Privilege >= 2}>
                 <div class="mt-auto">
-                    <Button variant="info" style={{ background: '#402208', color: 'white', "border-color": '#402208' }}>Reserve</Button>
+                    <Button
+                        variant="info"
+                        style={{ background: '#402208', color: 'white', "border-color": '#402208' }}
+                        onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                                await makeReservation(props.book.Id, user()!.Email);
+                            } catch (error) {}
+                        }}
+                    >
+                        Reserve
+                    </Button>
                 </div>
             </Show>
 
@@ -73,7 +105,7 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
                             try {
                                 await app.bookService.deleteBook(props.book.Id);
                                 props.onDelete();
-                            } catch (error) {}
+                            } catch (error) { }
                         }}
                     >
                         Delete

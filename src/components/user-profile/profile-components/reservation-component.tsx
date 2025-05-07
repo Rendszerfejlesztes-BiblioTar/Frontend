@@ -66,7 +66,6 @@ export default (): JSX.Element => {
                         <Table bordered hover>
                             <thead>
                                 <tr>
-                                    <th>Id</th>
                                     <th>Book</th>
                                     <th>Reservation date</th>
                                     <th>Expected start date</th>
@@ -81,7 +80,6 @@ export default (): JSX.Element => {
                                             when={res.IsAccepted}
                                             fallback={
                                                 <tr>
-                                                    <td>{res.Id}</td>
                                                     <For each={bookSig()}>
                                                         {(book: BookGetDTO): JSX.Element => {
                                                             if (res.BookId === book.Id) {
@@ -99,7 +97,6 @@ export default (): JSX.Element => {
                                             }
                                         >
                                             <tr>
-                                                <td>{res.Id}</td>
                                                 <For each={bookSig()}>
                                                     {(book: BookGetDTO): JSX.Element => {
                                                         if (res.BookId === book.Id) {
