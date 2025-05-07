@@ -97,7 +97,7 @@ export class AuthenticationService {
 
             const data: LoginAnswer = await res.json();
 
-            this.storeState(data);
+            await this.storeState(data);
 
             return data;
         } catch (error) {
@@ -112,7 +112,7 @@ export class AuthenticationService {
      * */
     public async refreshAuth(): Promise<LoginAnswer | undefined> {
         try {
-            const res: Response = await this.httpService.Post('users/refresh', this.refreshToken);
+            const res: Response = await this.httpService.Post('users/refresh', { RefreshToken: this.refreshToken });
 
             if (!res.ok) {
                 this.resetState();
@@ -122,9 +122,9 @@ export class AuthenticationService {
 
             const data: LoginAnswer = await res.json();
 
-            this.storeState(data);
+            await this.storeState(data);
 
-            return await res.json();
+            return data;
         } catch (error) {
             console.log('Failed to refresh token: ', error);
         }
@@ -232,8 +232,8 @@ export class AuthenticationService {
         }
     }
 
-    private storeState(data: LoginAnswer): void {
-        this.resetState();
+    private async storeState(data: LoginAnswer): Promise<void> {
+        console.log('DATA', data);
 
         const accessToken: string = data.Data?.AccessToken!;
         const refreshToken: string = data.Data?.RefreshToken!;
@@ -244,7 +244,15 @@ export class AuthenticationService {
         localStorage.setItem('expiresAt', `${expiresAt.getTime()}`);
 
         this.token.next(accessToken);
-        this.user.next(data.Data?.User);
+
+        const user: RegisteredUser | undefined = await this.getLoggedInUsersData();
+
+        if (!user) {
+            this.resetState();
+            return;
+        }
+        
+        this.user.next(user);
 
         this.expiresAt = new Date(expiresAt);
         this.refreshToken = refreshToken;
