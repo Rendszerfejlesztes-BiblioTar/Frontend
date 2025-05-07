@@ -30,9 +30,7 @@ export interface LoginAnswer {
     Success: boolean;
 }
 
-export interface ChangeCredentials {
-    OldEmail: string;
-    NewEmail: string;
+export interface ChangePassword {
     NewPassword: string;
 }
 
