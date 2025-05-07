@@ -23,7 +23,11 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
     const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
-    const navigate = useNavigate();
+
+    const navigator = useNavigate();
+    const navigate = (id: number): void => {
+        navigator(`/book/reservation/${id}`, { replace: false });
+    }
 
     if (props.book.Description != null) {
         if (props.book.Description.length > 50) {
@@ -36,6 +40,7 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
 
     return <Card
         style={{
+            animation: 'zoomIn 0.3s ease-out',
             width: '15rem',
             height: '100%',
             cursor: 'pointer',
@@ -57,9 +62,19 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
                 {descriptionSIG()}
             </Card.Text>
 
-            <Show when={user() && user()!.Privilege >= 2}>
+            <Show when={user() && user()!.Privilege == 2}>
                 <div class="mt-auto">
-                    <Button variant="info" style={{ background: '#402208', color: 'white', "border-color": '#402208' }}>Reserve</Button>
+                    <Button
+                        variant="info"
+                        disabled={!props.book.IsAvailable}
+                        style={{ background: '#402208', color: 'white', "border-color": '#402208' }}
+                        onClick={async (e) => { 
+                            e.stopPropagation();
+                            navigate(props.book.Id) 
+                        }}
+                    >
+                        Reserve
+                    </Button>
                 </div>
             </Show>
 
@@ -72,7 +87,7 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
                             try {
                                 await app.bookService.deleteBook(props.book.Id);
                                 props.onDelete();
-                            } catch (error) {}
+                            } catch (error) { }
                         }}
                     >
                         Delete

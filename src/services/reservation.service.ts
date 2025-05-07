@@ -47,9 +47,9 @@ export class ReservationService {
         }
     }
 
-    public async patchReservation(resId: number, reservation: Reservation): Promise<Reservation | undefined> {
+    public async patchReservation(reservation: Reservation): Promise<Reservation | undefined> {
         try {
-            const res: Response = await this.httpService.Patch(`Reservation/${resId}`, reservation);
+            const res: Response = await this.httpService.Patch(`Reservation/${reservation.Id}`, reservation);
 
             if (res.ok) {
                 return await res.json() as Reservation;
@@ -73,7 +73,7 @@ export class ReservationService {
 
     public async deleteReservation(resId: number): Promise<string | boolean | undefined> {
         try {
-            const res: Response = await this.httpService.Post(`Reservation/${resId}`);
+            const res: Response = await this.httpService.Delete(`Reservation/${resId}`);
 
             if (res.ok) {
                 return await res.json() as boolean;

@@ -7,7 +7,7 @@ import {
     AllUsers,
     Authentication,
     BooleanAnswer,
-    ChangeCredentials,
+    ChangePassword,
     ChangePrivilege,
     Contact
 } from "../interfaces/authentication.interfaces";
@@ -86,9 +86,9 @@ export class UserService {
      * @param credentials {ChangeCredentials}
      * @returns {Promise<BooleanAnswer | undefined>}
      * */
-    public async changeLogin(credentials: ChangeCredentials): Promise<BooleanAnswer | undefined> {
+    public async changePassword(password: ChangePassword): Promise<BooleanAnswer | undefined> {
         try {
-            const res: Response = await this.httpService.Put('users/login', credentials);
+            const res: Response = await this.httpService.Put('users/changepassword', password);
 
             if (!res.ok) {
                 return undefined
@@ -96,7 +96,7 @@ export class UserService {
 
             return await res.json();
         } catch (error) {
-            console.log('Change login error:', error);
+            console.log('Change password error:', error);
         }
 
         return undefined;

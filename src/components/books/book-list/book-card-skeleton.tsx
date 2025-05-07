@@ -9,6 +9,7 @@ export default (): JSX.Element => {
         <div class="col-2 d-flex justify-content-center mb-4">
             <Card
                 style={{
+                    animation: 'flash 3s infinite linear',
                     width: '15rem',
                     height: '100%',
                     cursor: 'default',

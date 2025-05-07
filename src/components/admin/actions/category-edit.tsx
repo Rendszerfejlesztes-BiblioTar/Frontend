@@ -99,10 +99,21 @@ export default (): JSX.Element => {
             class="d-flex justify-content-center"
             style={{ "max-height": '100%', "overflow-y": 'auto', padding: '2rem' }}
         >
-            <Card class="shadow rounded" style={{ width: '80vw', "max-width": '90vw', padding: '1rem' }}>
-                <h2 style={{ "font-size": '2rem', "margin-bottom": '1rem', "text-align": 'center' }}>Categories</h2>
-
-                <div class="table-responsive" style={{ width: '95%', margin: '0 auto' }}>
+            <Card class="shadow rounded" style={{ width: "80vw", "max-width": "90vw", padding: "1rem" }}>
+                <Card.Title
+                    style={{
+                        'animation': 'fadeInDown 0.5s ease-out',
+                        "font-size": "2.5rem",
+                        "margin-bottom": "1.5rem",
+                        "text-align": "center",
+                        "font-weight": "bold",
+                        "border-bottom": "2px solid #ccc",
+                        "padding-bottom": "0.5rem",
+                    }}
+                >
+                    Categories
+                </Card.Title>
+                <div class="table-responsive" style={{ width: '95%', margin: '0 auto', 'animation': 'fadeInDown 0.5s ease-out' }}>
                     <Table bordered hover>
                         <thead>
                             <tr>

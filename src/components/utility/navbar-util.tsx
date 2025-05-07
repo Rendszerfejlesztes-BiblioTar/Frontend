@@ -37,7 +37,7 @@ export default (): JSX.Element => {
                         <Show when={user()!.Privilege === 0}>
                             <Nav.Link href="/admin">Admin</Nav.Link>
                         </Show>
-                        <Show when={user()!.Privilege === 3}>
+                        <Show when={user()!.Privilege < 3}>
                             <Nav.Link href="/profile">User Profile</Nav.Link>
                         </Show>
                     </Nav>
@@ -45,7 +45,7 @@ export default (): JSX.Element => {
                     {/* Login/Logout */}
                     <Nav class="ms-auto">
                         <Show when={user()!.Privilege !== 3}>
-                            <Navbar.Text>Signed in as: {user()!.Email} ({user()!.PrivilegeString})</Navbar.Text>
+                            <Navbar.Text>Signed in as: <a style={{'text-decoration': 'none'}} href="/profile">{user()!.FirstName !== null? user()!.FirstName : user()!.Email}</a> ({user()!.PrivilegeString})</Navbar.Text>
                             <div class="vr mx-3"></div>
                             <Nav.Link href="/" onClick={(): void => {
                                 app.authentication.logout();

@@ -10,13 +10,14 @@ export interface Loan {
 
 export interface LoanPost {
     BookId: number;
+    UserEmail: string;
     StartTime: string;
 }
 
 export interface LoanPatch {
-    Extensions: number;
-    BookId: number;
-    StartDate: string;
-    ExpectedEndDate: string;
-    ReturnDate: string;
+    Extensions?: number;
+    BookId?: number;
+    StartDate?: string;
+    ExpectedEndDate?: string;
+    ReturnDate?: string;
 }

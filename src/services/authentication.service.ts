@@ -97,22 +97,7 @@ export class AuthenticationService {
 
             const data: LoginAnswer = await res.json();
 
-            const accessToken: string = data.Data?.AccessToken!;
-            const refreshToken: string = data.Data?.RefreshToken!;
-            const expiresAt: Date = new Date(data.Data?.ExpiresAt!);
-
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            localStorage.setItem('expiresAt', `${expiresAt.getTime()}`);
-
-            this.token.next(accessToken);
-            this.user.next(data.Data?.User);
-
-            this.expiresAt = new Date(expiresAt);
-            this.refreshToken = refreshToken;
-
-            this.clearInterval();
-            this.setInterval();
+            await this.storeState(data);
 
             return data;
         } catch (error) {
@@ -127,15 +112,19 @@ export class AuthenticationService {
      * */
     public async refreshAuth(): Promise<LoginAnswer | undefined> {
         try {
-            const res: Response = await this.httpService.Post('users/refresh', this.refreshToken);
+            const res: Response = await this.httpService.Post('users/refresh', { RefreshToken: this.refreshToken });
 
             if (!res.ok) {
-                this.clearInterval();
+                this.resetState();
 
                 return undefined;
             }
 
-            return await res.json();
+            const data: LoginAnswer = await res.json();
+
+            await this.storeState(data);
+
+            return data;
         } catch (error) {
             console.log('Failed to refresh token: ', error);
         }
@@ -241,5 +230,34 @@ export class AuthenticationService {
             clearInterval(this.interval);
             this.interval = null;
         }
+    }
+
+    private async storeState(data: LoginAnswer): Promise<void> {
+        console.log('DATA', data);
+
+        const accessToken: string = data.Data?.AccessToken!;
+        const refreshToken: string = data.Data?.RefreshToken!;
+        const expiresAt: Date = new Date(data.Data?.ExpiresAt!);
+
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('expiresAt', `${expiresAt.getTime()}`);
+
+        this.token.next(accessToken);
+
+        const user: RegisteredUser | undefined = await this.getLoggedInUsersData();
+
+        if (!user) {
+            this.resetState();
+            return;
+        }
+
+        this.user.next(user);
+
+        this.expiresAt = new Date(expiresAt);
+        this.refreshToken = refreshToken;
+
+        this.clearInterval();
+        this.setInterval();
     }
 }
