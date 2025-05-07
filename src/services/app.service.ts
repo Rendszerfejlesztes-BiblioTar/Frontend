@@ -7,7 +7,7 @@ import { HttpService } from "./http.service";
 import { CategoryService } from "./category.service";
 import { LoanService } from "./loan.service";
 import { UserService } from "./user.service";
-import {ReservationService} from "./reservation.service";
+import { ReservationService } from "./reservation.service";
 
 @singleton()
 export class AppService {
