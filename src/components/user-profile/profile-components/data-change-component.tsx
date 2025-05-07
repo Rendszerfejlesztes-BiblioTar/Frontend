@@ -40,7 +40,7 @@ export default (): JSX.Element => {
             const res = await app.userService.changeContact(profile);
             app.authentication.refreshAuth();
             setIsEditing(false);
-        } catch (error) {}
+        } catch (error) { }
     };
 
     return (
@@ -49,17 +49,27 @@ export default (): JSX.Element => {
             style={{ "max-height": "100%", "overflow-y": "auto", padding: "2rem" }}
         >
             <Card class="shadow rounded" style={{ width: "80vw", "max-width": "90vw", padding: "1rem" }}>
-                <h2 style={{ "font-size": "2rem", "margin-bottom": "1rem", "text-align": "center" }}>
+                <Card.Title
+                    style={{
+                        'animation': 'fadeInDown 0.5s ease-out',
+                        "font-size": "2.5rem",
+                        "margin-bottom": "1.5rem",
+                        "text-align": "center",
+                        "font-weight": "bold",
+                        "border-bottom": "2px solid #ccc",
+                        "padding-bottom": "0.5rem",
+                    }}
+                >
                     Profile Credentials
-                </h2>
+                </Card.Title>
 
                 <Card.Body class="d-flex flex-column">
-                    <div class="mb-3" style={{ "font-size": "1.5rem" }}>
+                    <div class="mb-3" style={{ "font-size": "1.5rem", 'animation': 'fadeInDown 0.5s ease-out' }}>
                         <b>Email:</b> {user()?.Email}
                     </div>
                     <hr class="my-2" />
                     {!isEditing() ? (
-                        <>
+                        <div style={{'animation': 'fadeInDown 0.5s ease-out'}}>
                             <div class="mb-2" style={{ "font-size": "1.5rem" }}>Firstname: <b>{user()?.FirstName}</b></div>
                             <div class="mb-2" style={{ "font-size": "1.5rem" }}>Lastname: <b>{user()?.LastName}</b></div>
                             <div class="mb-2" style={{ "font-size": "1.5rem" }}>Phone: <b>{user()?.Phone}</b></div>
@@ -71,9 +81,9 @@ export default (): JSX.Element => {
                             >
                                 Modify credentials
                             </Button>
-                        </>
+                        </div>
                     ) : (
-                        <>
+                        <div style={{'animation': 'fadeInDown 0.5s ease-out'}}>
                             <div class="mb-2">
                                 <b><label style={{ "font-size": "1.5rem" }}>Firstname</label></b>
                                 <FormControl
@@ -111,7 +121,7 @@ export default (): JSX.Element => {
                                 <Button variant="success" onClick={saveEdit}>Save</Button>
                                 <Button variant="danger" onClick={cancelEdit}>Cancel</Button>
                             </div>
-                        </>
+                        </div>
                     )}
                 </Card.Body>
             </Card>
