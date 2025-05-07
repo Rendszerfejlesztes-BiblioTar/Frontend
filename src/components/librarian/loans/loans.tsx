@@ -23,6 +23,19 @@ export default (props: { refreshTrigger: () => boolean }): JSX.Element => {
         fetchData();
     });
 
+    const formatDate = (isoString: string): string => {
+        const date = new Date(isoString);
+        const pad = (n: number): string => n.toString().padStart(2, '0');
+
+        const year = date.getFullYear();
+        const month = pad(date.getMonth() + 1);
+        const day = pad(date.getDate());
+        const hours = pad(date.getHours());
+        const minutes = pad(date.getMinutes());
+
+        return `${year}/${month}/${day} ${hours}:${minutes}`;
+    };
+
     const fetchData = (): void => {
         app.loanService.getAllLoans().then((res: Loan[] | undefined): void => {
             if (res) {
@@ -93,11 +106,11 @@ export default (props: { refreshTrigger: () => boolean }): JSX.Element => {
                                         <td>{loan.BookId}</td>
                                         <td>{loan.UserEmail}</td>
                                         <td>{loan.Extensions}</td>
-                                        <td>{loan.StartDate}</td>
-                                        <td>{loan.ExpectedEndDate}</td>
+                                        <td>{formatDate(loan.StartDate)}</td>
+                                        <td>{formatDate(loan.ExpectedEndDate)}</td>
                                         <Show when={loan.ReturnDate === null}
                                             fallback={<>
-                                                <td>{loan.ReturnDate}</td>
+                                                <td>{formatDate(loan.ReturnDate)}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-between gap-2">
                                                         <Button variant="danger" onClick={() => handleDelete(loan)}
@@ -109,7 +122,7 @@ export default (props: { refreshTrigger: () => boolean }): JSX.Element => {
                                                 </td>
                                             </>}
                                         >
-                                            <td>{loan.ReturnDate}</td>
+                                            <td>---</td>
                                             <td>
                                                 <div class="d-flex justify-content-between gap-2">
                                                     <Button variant="success" onClick={() => handleReturn(loan)}

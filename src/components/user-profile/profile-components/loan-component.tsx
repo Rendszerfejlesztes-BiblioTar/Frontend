@@ -63,7 +63,7 @@ export default (): JSX.Element => {
                             "padding-bottom": "0.5rem",
                         }}
                     >
-                        Reservations
+                        Loans
                     </Card.Title>
                     <div class="table-responsive" style={{ width: '95%', margin: '0 auto' }}>
                         <Table bordered hover>

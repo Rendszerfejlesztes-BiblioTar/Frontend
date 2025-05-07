@@ -25,6 +25,19 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
         fetchData();
     });
 
+    const formatDate = (isoString: string): string => {
+        const date = new Date(isoString);
+        const pad = (n: number): string => n.toString().padStart(2, '0');
+
+        const year = date.getFullYear();
+        const month = pad(date.getMonth() + 1);
+        const day = pad(date.getDate());
+        const hours = pad(date.getHours());
+        const minutes = pad(date.getMinutes());
+
+        return `${year}/${month}/${day} ${hours}:${minutes}`;
+    };
+
     const fetchData = (): void => {
         app.reservationService.getAllReservations().then((res: Reservation[] | undefined): void => {
             if (res) {
@@ -43,7 +56,7 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
     }
 
     const handelDelete = async (reservation: Reservation): Promise<void> => {
-        await app.reservationService.deleteReservation(reservation.Id);
+        await app.reservationService.deleteReservation(reservation.Id!);
     }
 
     const handleConvertToLoan = async (reservation: Reservation): Promise<void> => {
@@ -58,7 +71,7 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
         if (res) {
             props.onReservationChange();
 
-            await app.reservationService.deleteReservation(reservation.Id);
+            await app.reservationService.deleteReservation(reservation.Id!);
             fetchData();
         }
     }
@@ -119,9 +132,9 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
                                                 <td>{res.Id}</td>
                                                 <td>{res.BookId}</td>
                                                 <td>{res.UserEmail}</td>
-                                                <td>{res.ReservationDate}</td>
-                                                <td>{res.ExpectedStart}</td>
-                                                <td>{res.ExpectedEnd}</td>
+                                                <td>{formatDate(res.ReservationDate)}</td>
+                                                <td>{formatDate(res.ExpectedStart)}</td>
+                                                <td>{formatDate(res.ExpectedEnd)}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-between gap-2">
                                                         <Button variant="primary" onClick={() => handleAccept(res)}
@@ -137,9 +150,9 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
                                             <td>{res.Id}</td>
                                             <td>{res.BookId}</td>
                                             <td>{res.UserEmail}</td>
-                                            <td>{res.ReservationDate}</td>
-                                            <td>{res.ExpectedStart}</td>
-                                            <td>{res.ExpectedEnd}</td>
+                                            <td>{formatDate(res.ReservationDate)}</td>
+                                            <td>{formatDate(res.ExpectedStart)}</td>
+                                            <td>{formatDate(res.ExpectedEnd)}</td>
                                             <td>
                                                 <div class="d-flex justify-content-between gap-2">
                                                     <Button variant="success" onClick={() => handleConvertToLoan(res)}
