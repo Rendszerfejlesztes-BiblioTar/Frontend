@@ -67,7 +67,7 @@ export default (props: { mode: string }): JSX.Element => {
 
     return <>
         <div class="d-flex justify-content-center" style={{ "max-height": '100%', "overflow-y": 'auto', padding: '2rem' }}>
-            <Card class="shadow rounded" style={{ width: '80vw', "max-width": '60vw' }}>
+            <Card class="shadow rounded" style={{ width: '80vw', "max-width": '60vw', 'animation': 'fadeInDown 0.5s ease-out' }}>
                 <Show when={modeSIG() === 'view' && bookSIG()}>
                     {(book: Accessor<BookGetDTO>): JSX.Element => (
                         <Switch>

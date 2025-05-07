@@ -14,11 +14,6 @@ export default (): JSX.Element => {
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
 
     const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
-
-    onMount((): void => {
-       console.log(user());
-    });
-
     return <>
         <DataChangeComponent></DataChangeComponent>
         <PasswordChangeComponent></PasswordChangeComponent>

@@ -39,7 +39,6 @@ export default (props: { refreshTrigger: () => boolean }): JSX.Element => {
     const fetchData = (): void => {
         app.loanService.getAllLoans().then((res: Loan[] | undefined): void => {
             if (res) {
-                console.log('LOANS', res)
                 setLoansSIG(res);
             }
         })
@@ -84,7 +83,7 @@ export default (props: { refreshTrigger: () => boolean }): JSX.Element => {
                     >
                         Loans
                     </Card.Title>
-                    <div class="table-responsive" style={{width: '95%', margin: '0 auto'}}>
+                    <div class="table-responsive" style={{width: '95%', margin: '0 auto', 'animation': 'fadeInDown 0.5s ease-out'}}>
                         <Table bordered hover>
                             <thead>
                                 <tr>

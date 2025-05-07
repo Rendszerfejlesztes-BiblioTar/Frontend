@@ -15,7 +15,6 @@ import { RegisteredUser } from "../../../interfaces/authentication.interfaces";
 import { AppService } from "../../../services/app.service";
 import { DIContextProvider } from "../../../services/di-context-provider.service";
 import { useNavigate } from "@solidjs/router";
-import { Reservation } from "../../../interfaces/reservation.interfaces";
 
 export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => void }): JSX.Element => {
 
@@ -25,6 +24,11 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
     const user: Accessor<RegisteredUser | undefined> = from(app.authentication.user$);
 
+    const navigator = useNavigate();
+    const navigate = (id: number): void => {
+        navigator(`/book/reservation/${id}`, { replace: false });
+    }
+
     if (props.book.Description != null) {
         if (props.book.Description.length > 50) {
             setDescriptionSIG(props.book.Description.substring(0, 50) + '...');
@@ -33,27 +37,6 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
             setDescriptionSIG(props.book.Description);
         }
     }
-
-    const makeReservation = async (bookId: number, userEmail: string) => {
-        const now = new Date();
-        const reservationDate = now.toISOString();
-        const expectedStart = reservationDate;
-    
-        const expectedEnd = new Date();
-        expectedEnd.setDate(now.getDate() + 14);
-        const expectedEndStr = expectedEnd.toISOString();
-    
-        const reservation: Reservation = {
-            BookId: bookId,
-            UserEmail: userEmail,
-            IsAccepted: false,
-            ReservationDate: reservationDate,
-            ExpectedStart: expectedStart,
-            ExpectedEnd: expectedEndStr,
-        };
-    
-        await app.reservationService.postReservation(reservation);
-    };
 
     return <Card
         style={{
@@ -79,16 +62,15 @@ export default (props: { book: BookGetDTO, onClick: () => void, onDelete: () => 
                 {descriptionSIG()}
             </Card.Text>
 
-            <Show when={user() && user()!.Privilege >= 2}>
+            <Show when={user() && user()!.Privilege == 2}>
                 <div class="mt-auto">
                     <Button
                         variant="info"
+                        disabled={!props.book.IsAvailable}
                         style={{ background: '#402208', color: 'white', "border-color": '#402208' }}
-                        onClick={async (e) => {
+                        onClick={async (e) => { 
                             e.stopPropagation();
-                            try {
-                                await makeReservation(props.book.Id, user()!.Email);
-                            } catch (error) {}
+                            navigate(props.book.Id) 
                         }}
                     >
                         Reserve

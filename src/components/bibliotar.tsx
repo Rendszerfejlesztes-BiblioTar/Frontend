@@ -27,6 +27,7 @@ export default (): JSX.Element => {
   const Login = lazy(() => import('./auth/login/login'));
   const Register = lazy(() => import('./auth/register/register'));
   const UserProfile = lazy(() => import('./user-profile/user-profile'));
+  const Reservation = lazy(() => import('./utility/reservation-page'));
   const ProtectedRoute = lazy(() => import('./protected-route'));
 
   const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
@@ -47,6 +48,9 @@ export default (): JSX.Element => {
   /* Librarian wrapper */
   const LibrarianPage = () => <ProtectedRoute privilege={user()!.Privilege} reqPrivilege={1} defPath={'/home'} children={<Librarian />} />
 
+  // Reservation wrappper
+  const ReservationPage = () => <ProtectedRoute privilege={user()!.Privilege} reqPrivilege={2} defPath={'/home'} children={<Reservation />} />
+  
   return <>
     <div
         style={{
@@ -79,6 +83,7 @@ export default (): JSX.Element => {
         <Route path={'/librarian'} component={LibrarianPage} />
         <Route path={'/profile'} component={UserProfile} />
         <Route path={'/books/create'} component={BookCreate} />
+        <Route path={'/book/reservation/:id'} component={ReservationPage} />
 
         {/* Page not found */}
         <Route path='*404' component={PageNotFound} />

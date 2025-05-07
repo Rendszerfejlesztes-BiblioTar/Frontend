@@ -29,14 +29,12 @@ export default (): JSX.Element => {
     onMount((): void => {
         app.reservationService.getUsersReservation().then((res: Reservation[] | undefined): void => {
             if (res) {
-                console.log(' res', res);
                 setReservationsSIG(res);
             }
         });
 
         app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
             if (res) {
-                console.log(' res', res);
                 setBookSig(res);
             }
         });

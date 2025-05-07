@@ -32,14 +32,12 @@ export default (): JSX.Element => {
     onMount((): void => {
         app.loanService.getUserLoans(user()!.Email).then((res: Loan[] | undefined): void => {
             if (res) {
-                console.log(' res', res);
                 setLoansSIG(res);
             }
         });
 
         app.bookService.getBooks().then((res: BookGetDTO[] | undefined): void => {
             if (res) {
-                console.log(' res', res);
                 setBookSig(res);
             }
         });

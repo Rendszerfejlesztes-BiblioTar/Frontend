@@ -1,6 +1,6 @@
 import { Card, Table, FormControl, Button, Form } from "solid-bootstrap";
 import { JSX, useContext, Accessor, from, createSignal, onMount, For, Show } from "solid-js";
-import { AllUsers, ChangeCredentials, ChangePrivilege, RegisteredUser } from "../../../interfaces/authentication.interfaces";
+import { AllUsers, ChangePrivilege, RegisteredUser } from "../../../interfaces/authentication.interfaces";
 import { CategoryGetDTO } from "../../../interfaces/category.interfaces";
 import { AppService } from "../../../services/app.service";
 import { DIContextProvider } from "../../../services/di-context-provider.service";
@@ -47,9 +47,7 @@ export default (): JSX.Element => {
             const updated = await app.userService.getAllUsers();
             setUserSig(updated || { Success: false });
             setEditingEmail(null);
-        } catch (err) {
-            console.error(err);
-        }
+        } catch (err) {}
     };
 
 
@@ -77,10 +75,21 @@ export default (): JSX.Element => {
             class="d-flex justify-content-center"
             style={{ "max-height": '100%', "overflow-y": 'auto', padding: '2rem' }}
         >
-            <Card class="shadow rounded" style={{ width: '80vw', "max-width": '90vw', padding: '1rem' }}>
-                <h2 style={{ "font-size": '2rem', "margin-bottom": '1rem', "text-align": 'center' }}>Users</h2>
-
-                <div class="table-responsive" style={{ width: '95%', margin: '0 auto' }}>
+            <Card class="shadow rounded" style={{ width: "80vw", "max-width": "90vw", padding: "1rem" }}>
+                <Card.Title
+                    style={{
+                        'animation': 'fadeInDown 0.5s ease-out',
+                        "font-size": "2.5rem",
+                        "margin-bottom": "1.5rem",
+                        "text-align": "center",
+                        "font-weight": "bold",
+                        "border-bottom": "2px solid #ccc",
+                        "padding-bottom": "0.5rem",
+                    }}
+                >
+                    Users
+                </Card.Title>
+                <div class="table-responsive" style={{ width: '95%', margin: '0 auto', 'animation': 'fadeInDown 0.5s ease-out' }}>
                     <Table bordered hover>
                         <thead>
                             <tr>

@@ -6,16 +6,16 @@ import {
     Show,
     useContext
 } from "solid-js";
-import {Button, Card, Table} from "solid-bootstrap";
+import { Button, Card, Table } from "solid-bootstrap";
 
 
-import {DIContextProvider} from "../../../services/di-context-provider.service";
-import {AppService} from "../../../services/app.service";
+import { DIContextProvider } from "../../../services/di-context-provider.service";
+import { AppService } from "../../../services/app.service";
 
-import {Reservation} from "../../../interfaces/reservation.interfaces";
-import {Loan, LoanPost} from "../../../interfaces/loan.interfaces";
+import { Reservation } from "../../../interfaces/reservation.interfaces";
+import { Loan, LoanPost } from "../../../interfaces/loan.interfaces";
 
-export default (props: {onReservationChange: () => void}): JSX.Element => {
+export default (props: { onReservationChange: () => void }): JSX.Element => {
 
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
 
@@ -92,7 +92,7 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
     return <>
         <div
             class="d-flex justify-content-center"
-            style={{"max-height": '100%', "overflow-y": 'auto', padding: '2rem'}}
+            style={{ "max-height": '100%', "overflow-y": 'auto', padding: '2rem' }}
         >
             <Card class="shadow rounded" style={{ width: '80vw', "max-width": '90vw', padding: '1rem' }}>
                 <Card.Body>
@@ -109,7 +109,7 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
                     >
                         Reservations
                     </Card.Title>
-                    <div class="table-responsive" style={{width: '95%', margin: '0 auto'}}>
+                    <div class="table-responsive" style={{ width: '95%', margin: '0 auto', 'animation': 'fadeInDown 0.5s ease-out' }}>
                         <Table bordered hover>
                             <thead>
                                 <tr>
@@ -124,10 +124,27 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
                             </thead>
                             <tbody>
                                 <For each={reservationsSIG()}>
-                                {(res: Reservation): JSX.Element => (
-                                    <Show
-                                        when={res.IsAccepted}
-                                        fallback={
+                                    {(res: Reservation): JSX.Element => (
+                                        <Show
+                                            when={res.IsAccepted}
+                                            fallback={
+                                                <tr>
+                                                    <td>{res.Id}</td>
+                                                    <td>{res.BookId}</td>
+                                                    <td>{res.UserEmail}</td>
+                                                    <td>{formatDate(res.ReservationDate)}</td>
+                                                    <td>{formatDate(res.ExpectedStart)}</td>
+                                                    <td>{formatDate(res.ExpectedEnd)}</td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-start gap-1">
+                                                            <Button variant="primary" onClick={() => handleAccept(res)} style={{ width: '7rem', "min-width": '7rem' }}>Accept</Button>
+                                                            <Button variant="danger" onClick={() => handelDelete(res)} style={{ width: '7rem', "min-width": '7rem' }}>Delete</Button>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        >
                                             <tr>
                                                 <td>{res.Id}</td>
                                                 <td>{res.BookId}</td>
@@ -136,34 +153,16 @@ export default (props: {onReservationChange: () => void}): JSX.Element => {
                                                 <td>{formatDate(res.ExpectedStart)}</td>
                                                 <td>{formatDate(res.ExpectedEnd)}</td>
                                                 <td>
-                                                    <div class="d-flex justify-content-between gap-2">
-                                                        <Button variant="primary" onClick={() => handleAccept(res)}
-                                                                style={{width: '5rem', "min-width": '5rem'}}>Accept</Button>
-                                                        <Button variant="danger" onClick={() => handelDelete(res)}
-                                                                style={{width: '5rem', "min-width": '5rem'}}>Delete</Button>
+                                                <div class="d-flex justify-content-start gap-1">
+                                                        <Button variant="success" onClick={() => handleConvertToLoan(res)}
+                                                            style={{ width: '7rem', "min-width": '7rem' }}>Start Loan</Button>
+                                                        <Button variant="danger" onClick={() => handleCancel(res)}
+                                                            style={{ width: '7rem', "min-width": '7rem' }}>Cancel</Button>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        }
-                                    >
-                                        <tr>
-                                            <td>{res.Id}</td>
-                                            <td>{res.BookId}</td>
-                                            <td>{res.UserEmail}</td>
-                                            <td>{formatDate(res.ReservationDate)}</td>
-                                            <td>{formatDate(res.ExpectedStart)}</td>
-                                            <td>{formatDate(res.ExpectedEnd)}</td>
-                                            <td>
-                                                <div class="d-flex justify-content-between gap-2">
-                                                    <Button variant="success" onClick={() => handleConvertToLoan(res)}
-                                                            style={{width: '5rem', "min-width": '5rem'}}>Start Loan</Button>
-                                                    <Button variant="danger" onClick={() => handleCancel(res)}
-                                                            style={{width: '5rem', "min-width": '5rem'}}>Cancel</Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </Show>
-                                )}
+                                        </Show>
+                                    )}
                                 </For>
                             </tbody>
                         </Table>
