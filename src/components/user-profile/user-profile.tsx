@@ -5,6 +5,7 @@ import {
 import {DIContextProvider} from "../../services/di-context-provider.service";
 import {AppService} from "../../services/app.service";
 import {RegisteredUser} from "../../interfaces/authentication.interfaces";
+import DataChangeComponent from "./profile-components/data-change-component";
 
 export default (): JSX.Element => {
     const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
@@ -16,11 +17,6 @@ export default (): JSX.Element => {
     });
 
     return <>
-        <p>Profile Page</p>
-        <div>
-            <p>
-                {user()!.Email}
-            </p>
-        </div>
+        <DataChangeComponent></DataChangeComponent>
     </>
 }
