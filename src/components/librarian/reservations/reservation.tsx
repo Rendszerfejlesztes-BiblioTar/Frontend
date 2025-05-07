@@ -1,0 +1,119 @@
+import {
+    createSignal,
+    For,
+    JSX,
+    onMount,
+    Show,
+    useContext
+} from "solid-js";
+import {Button, Card, FormControl, Table} from "solid-bootstrap";
+
+
+import {DIContextProvider} from "../../../services/di-context-provider.service";
+import {AppService} from "../../../services/app.service";
+
+import {Reservation} from "../../../interfaces/reservation.interfaces";
+
+export default (): JSX.Element => {
+
+    const app: AppService = useContext(DIContextProvider)!.resolve(AppService);
+
+    const [reservationsSIG, setReservationsSIG] = createSignal<Reservation[]>([]);
+
+    onMount((): void => {
+        app.reservationService.getAllReservations().then((res: Reservation[] | undefined): void => {
+            if (res) {
+                console.log(' res',res);
+                setReservationsSIG(res);
+            }
+        });
+    });
+
+
+    return <>
+        <div
+            class="d-flex justify-content-center"
+            style={{"max-height": '100%', "overflow-y": 'auto', padding: '2rem'}}
+        >
+            <Card>
+                <Card.Body>
+                    <Card.Title
+                        style={{
+                            'animation': 'fadeInDown 0.5s ease-out',
+                            "font-size": "2.5rem",
+                            "margin-bottom": "1.5rem",
+                            "text-align": "center",
+                            "font-weight": "bold",
+                            "border-bottom": "2px solid #ccc",
+                            "padding-bottom": "0.5rem",
+                        }}
+                    >
+                        Reservations
+                    </Card.Title>
+                    <div class="table-responsive" style={{width: '95%', margin: '0 auto'}}>
+                        <Table bordered hover>
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>BookId</th>
+                                <th>User Email</th>
+                                <th>Reservation date</th>
+                                <th>Expected start date</th>
+                                <th>Expected end</th>
+                                <th>Accepted</th>
+                                <th>Edit</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <For each={reservationsSIG()}>
+                                {(res: Reservation): JSX.Element => (
+                                    <Show
+                                        when={res.IsAccepted}
+                                        fallback={
+                                        <tr>
+                                            <td>{res.Id}</td>
+                                            <td>{res.BookId}</td>
+                                            <td>{res.UserEmail}</td>
+                                            <td>{res.ReservationDate}</td>
+                                            <td>{res.ExpectedStart}</td>
+                                            <td>{res.ExpectedEnd}</td>
+                                            <td>{res.IsAccepted}</td>
+                                            <td>
+                                                <div class="d-flex justify-content-between gap-2">
+                                                    <Button variant="primary" onClick={() => console.log('')}
+                                                            style={{width: '5rem', "min-width": '5rem'}}>Accept</Button>
+                                                    <Button variant="danger" onClick={() => console.log('')}
+                                                            style={{width: '5rem', "min-width": '5rem'}}>Delete</Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        }
+                                    >
+                                        <tr>
+                                            <td>{res.Id}</td>
+                                            <td>{res.BookId}</td>
+                                            <td>{res.UserEmail}</td>
+                                            <td>{res.ReservationDate}</td>
+                                            <td>{res.ExpectedStart}</td>
+                                            <td>{res.ExpectedEnd}</td>
+                                            <td>{res.IsAccepted}</td>
+                                            <td>
+                                                <div class="d-flex justify-content-between gap-2">
+                                                    <Button variant="success" onClick={() => console.log('starting loan')}
+                                                            style={{width: '5rem', "min-width": '5rem'}}>Start Loan</Button>
+                                                    <Button variant="danger" onClick={() => console.log('cancel')}
+                                                            style={{width: '5rem', "min-width": '5rem'}}>Cancel</Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </Show>
+                                )}
+                                </For>
+                            </tbody>
+                        </Table>
+                    </div>
+                </Card.Body>
+            </Card>
+        </div>
+    </>
+}
