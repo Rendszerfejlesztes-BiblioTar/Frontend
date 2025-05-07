@@ -32,6 +32,6 @@ export class AppService {
         this.categoryService = new CategoryService(this.httpService);
         this.loanService = new LoanService(this.httpService);
         this.userService = new UserService(this.httpService);
-        this.reservationService = new ReservationService(this.httpService)
+        this.reservationService = new ReservationService(this.httpService);
     }
 }

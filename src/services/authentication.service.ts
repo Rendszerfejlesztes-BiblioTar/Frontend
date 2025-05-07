@@ -97,22 +97,7 @@ export class AuthenticationService {
 
             const data: LoginAnswer = await res.json();
 
-            const accessToken: string = data.Data?.AccessToken!;
-            const refreshToken: string = data.Data?.RefreshToken!;
-            const expiresAt: Date = new Date(data.Data?.ExpiresAt!);
-
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            localStorage.setItem('expiresAt', `${expiresAt.getTime()}`);
-
-            this.token.next(accessToken);
-            this.user.next(data.Data?.User);
-
-            this.expiresAt = new Date(expiresAt);
-            this.refreshToken = refreshToken;
-
-            this.clearInterval();
-            this.setInterval();
+            this.storeState(data);
 
             return data;
         } catch (error) {
@@ -130,10 +115,14 @@ export class AuthenticationService {
             const res: Response = await this.httpService.Post('users/refresh', this.refreshToken);
 
             if (!res.ok) {
-                this.clearInterval();
+                this.resetState();
 
                 return undefined;
             }
+
+            const data: LoginAnswer = await res.json();
+
+            this.storeState(data);
 
             return await res.json();
         } catch (error) {
@@ -241,5 +230,26 @@ export class AuthenticationService {
             clearInterval(this.interval);
             this.interval = null;
         }
+    }
+
+    private storeState(data: LoginAnswer): void {
+        this.resetState();
+
+        const accessToken: string = data.Data?.AccessToken!;
+        const refreshToken: string = data.Data?.RefreshToken!;
+        const expiresAt: Date = new Date(data.Data?.ExpiresAt!);
+
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('expiresAt', `${expiresAt.getTime()}`);
+
+        this.token.next(accessToken);
+        this.user.next(data.Data?.User);
+
+        this.expiresAt = new Date(expiresAt);
+        this.refreshToken = refreshToken;
+
+        this.clearInterval();
+        this.setInterval();
     }
 }
